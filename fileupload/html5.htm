@@ -1,0 +1,166 @@
+<html>
+<head>
+		<style>
+		
+		#file-list {
+			list-style: none;
+			margin-bottom: 3em;
+		}
+	
+		#file-list li {
+			border-bottom: 1px solid #000;
+			margin-bottom: 0.5em;
+			padding-bottom: 0.5em;
+		}
+
+		#file-list li.no-items {
+			border-bottom: none;
+		}
+		
+		#file-list div {
+			margin-bottom: 0.5em;
+		}
+		
+		#file-list li img {
+			max-width: 400px;
+		}
+		
+		#file-list .progress-bar-container {
+			width: 400px;
+			height: 10px;
+			border: 1px solid #555;
+			margin-bottom: 20px;
+		}
+		
+		#file-list .progress-bar-container.uploaded {
+			height: auto;
+			border: none;
+		}
+		
+		#file-list .progress-bar {
+			width: 0;
+			height: 10px;
+			font-weight: bold;
+			background: #6787e3;
+		}
+		
+		#file-list .progress-bar-container.uploaded .progress-bar{
+			display: inline-block;
+			width: auto;
+			color: #6db508;
+			background: transparent;
+		}
+	</style>
+
+</head>	
+	
+<body>
+
+<input id="file" type="file" multiple>
+<input id="btnUpload" type="button" value="Upload" />
+
+<ul id="file-list">
+	<li class="no-items"></li>
+</ul>
+
+<script type="text/javascript">
+		( function () {
+			var btnUpload = document.getElementById("btnUpload");
+			var filesUpload = document.getElementById("file");
+			var fileList = document.getElementById("file-list");
+				
+			function uploadFile (file) {
+				var li = document.createElement("li"),
+					div = document.createElement("div"),
+					img,
+					progressBarContainer = document.createElement("div"),
+					progressBar = document.createElement("div"),
+					reader,
+					xhr,
+					fileInfo;
+					
+				li.appendChild(div);
+				
+				progressBarContainer.className = "progress-bar-container";
+				progressBar.className = "progress-bar";
+				progressBarContainer.appendChild(progressBar);
+				li.appendChild(progressBarContainer);
+				
+				/*
+					If the file is an image and the web browser supports FileReader,
+					present a preview in the file list
+				*/
+				if (typeof FileReader !== "undefined" && (/image/i).test(file.type)) {
+					img = document.createElement("img");
+					li.appendChild(img);
+					reader = new FileReader();
+					reader.onload = (function (theImg) {
+						return function (evt) {
+							theImg.src = evt.target.result;
+						};
+					}(img));
+					reader.readAsDataURL(file);
+				}
+				
+				// Uploading - for Firefox, Google Chrome and Safari
+				xhr = new XMLHttpRequest();
+				
+				// Update progress bar
+				xhr.upload.addEventListener("progress", function (evt) {
+					if (evt.lengthComputable) {
+						progressBar.style.width = (evt.loaded / evt.total) * 100 + "%";
+					}
+					else {
+						// No data to calculate on
+					}
+				}, false);
+				
+				// File uploaded
+				xhr.addEventListener("load", function(resp) {
+					progressBarContainer.className += " uploaded";
+					progressBar.innerHTML = resp.currentTarget.responseText;
+				}, false);
+				
+				xhr.open("post", "http://mylaptop/pt/fileupload/html5.php", true);
+				
+				// Set appropriate headers
+				xhr.setRequestHeader("Content-Type", "multipart/form-data");
+				xhr.setRequestHeader("X-File-Name", file.fileName);
+				xhr.setRequestHeader("X-File-Size", file.fileSize);
+				xhr.setRequestHeader("X-File-Type", file.type);
+
+				// Send the file (doh)
+				xhr.send(file);
+				
+				// Present file info and append it to the list of files
+				fileInfo = "<div><strong>Name:</strong> " + file.name + "</div>";
+				fileInfo += "<div><strong>Size:</strong> " + parseInt(file.size / 1024, 10) + " kb</div>";
+				fileInfo += "<div><strong>Type:</strong> " + file.type + "</div>";
+				div.innerHTML = fileInfo;
+				
+				fileList.appendChild(li);
+			}
+			
+			function traverseFiles (files) {
+				if (typeof files !== "undefined") {
+					for (var i=0, l=files.length; i<l; i++) {
+						uploadFile(files[i]);
+					}
+				}
+				else {
+					fileList.innerHTML = "No support for the File API in this web browser";
+				}	
+			}
+			
+			btnUpload.addEventListener("click", function(){
+				traverseFiles(filesUpload.files);
+			}, false);
+			
+		})();
+
+</script>
+
+</body>
+</html>
+
+

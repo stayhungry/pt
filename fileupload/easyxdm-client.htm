@@ -1,0 +1,36 @@
+<html>
+<head>
+	<script type="text/javascript" src="http://consumer.easyxdm.net/current/easyXDM.debug.js"></script> 
+	<script type="text/javascript"> 
+	    easyXDM.DomHelper.requiresJSON("http://consumer.easyxdm.net/current/json2.js");
+	</script> 
+</head>
+<body>
+
+
+<form id="frmUpload" action="http://mylaptop/pt/fileupload/easyxdm-remote.php" target="upload_target" method="POST" enctype="multipart/form-data"> 
+	<input type="file" name="file"/><input type="submit" id="btnSubmit" value="Upload"/> 
+</form>
+
+
+<script type="text/javascript">
+	var btn;
+	var remote = new easyXDM.Rpc(
+		{
+	    remote: "http://mylaptop/pt/fileupload/easyxdm-remote.htm",
+		}, 
+		{
+    	local: {
+        returnUploadResponse: function(response){
+        	alert(response.msg);
+        }
+    	}
+		}
+	);
+
+</script>
+
+</body>
+</html>
+
+

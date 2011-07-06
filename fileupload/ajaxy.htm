@@ -1,0 +1,31 @@
+<html>
+<body>
+
+
+<form id="uploadform" method="post" enctype="multipart/form-data" action="ajaxy.php">
+	<input name="file" id="file" type="file" />
+	<input type="submit" name="action" value="Upload" />
+	<iframe id="target_iframe" name="target_iframe" src="" style="width:0;height:0;border:0px"></iframe>
+</form>
+
+<script type="text/javascript">
+	function initUpload() {
+	   /*set the target of the form to the iframe and display the status message on form submit. */
+			document.getElementById('uploadform').onsubmit=function() {
+			document.getElementById('uploadform').target = 'target_iframe';
+		  document.getElementById('status').style.display="block"; 
+		}
+	}
+
+	//This function will be called when the upload completes.
+	function uploadComplete(status){
+	   alert(status);
+	}
+
+	window.onload=initUpload;
+</script>
+
+</body>
+</html>
+
+
