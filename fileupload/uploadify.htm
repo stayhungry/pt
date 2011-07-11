@@ -8,11 +8,12 @@
 $(document).ready(function() {
   $('#file_upload').uploadify({
     'uploader'  : 'uploadify/uploadify.swf',
-    'script'    : 'uploadify.php',
+    'script'    : 'http://mylaptop/pt/fileupload/uploadify.php',
     'cancelImg' : 'uploadify/cancel.png',
     'folder'    : 'upfiles',
     'auto'      : false,
-    'multi'     : true
+    'multi'     : true,
+    'scriptAccess' : 'always'
   });
 });
 </script>
