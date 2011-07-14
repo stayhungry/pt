@@ -26,15 +26,15 @@
 <div id="html5-impl" class="html-polyfills"> 
 	<form id="fup-form">
 	  <div class="row">
-	    <input type="file" id="fileToUpload" name="fileToUpload" multiple/>
+	    <input type="file" id="file-to-upload" multiple/>
 	  </div>
 	  <div class="row">
-	    <input type="button" id="uploadFile" value="Upload" />
+	    <input type="button" id="btn-upload" value="Upload" />
 	  </div>
 	</form>
 	<div id="fup-info">
 	  <div id="fileInfo">
-	    <div id="fileName"></div>
+	    <div id="file-name"></div>
 	    <div id="fileSize"></div>
 	    <div id="fileType"></div>
 	  </div>
@@ -55,7 +55,7 @@
 
 <div id="flash-impl" class="html-polyfills"> 
 	<input type="file" id="file_upload" name="file_upload" />
-	<input type="button" id="btn-upload" value="Upload" />
+	<input type="button" id="btn_upload" value="Upload" />
 </div>
 
 <script type="text/javascript">
@@ -64,6 +64,7 @@
 
 		if (!!window.FileReader && Modernizr.draganddrop) {
 			initHtml5();
+			initFlash();
 		}
 		else{
 			initFlash();
@@ -76,14 +77,14 @@
 		$('#html5-impl').show();
 		var nysiFileUpload = NYSI.html5.bootstrap();	
 
-		$('#fileToUpload').bind({
+		$('#file-to-upload').bind({
 			change: function(e) {
 				nysiFileUpload.fileSelected();
 				e.preventDefault();
 			}
 		});
 
-		$('#uploadFile').bind({
+		$('#btn-upload').bind({
 			click: function(e) {
 				nysiFileUpload.uploadFiles();
 			}
@@ -93,7 +94,7 @@
 	function initFlash(){
 		$('#flash-impl').show();
 		NYSI.flash.bootstrap();
-		$('#btn-upload').bind({
+		$('#btn_upload').bind({
 			click: function(e) {
 				$('#file_upload').uploadifyUpload();
 			}
@@ -220,7 +221,7 @@
 		return {
 
 			fileSelected: function(){
-		    var file = document.getElementById('fileToUpload').files[0]; 
+		    var file = $('#file-to-upload')[0].files[0]; 
 		    var fileSize = 0;
 		    if (file.size > 1024 * 1024){
 		      fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
@@ -228,21 +229,21 @@
 		    else{
 		      fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
 		    }
-		    document.getElementById('fileInfo').style.display = 'block';
-		    document.getElementById('fileName').innerHTML = 'Name: ' + file.name;
-		    document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
-		    document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
+		    $('#fileInfo').css('display', 'block');
+		    $('#file-name').html('Name: ' + file.name);
+		    $('#fileSize').html('Size: ' + fileSize);
+		    $('#fileType').html('Type: ' + file.type);
 			},
 			
 			uploadFiles: function(){
-				var files = document.getElementById('fileToUpload').files;
+				var files = $('#file-to-upload')[0].files;
 				if (typeof files !== "undefined") {
 					for (var i=0, l=files.length; i<l; i++) {
 						uploadFile(files[i]);
 					}
 				}
 				else {
-					fileList.innerHTML = "No support for the File API in this web browser";
+					$('#fup-info').html("No support for the File API in this web browser");
 				}	
 			}
 		};		
