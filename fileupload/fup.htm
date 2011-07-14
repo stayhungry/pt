@@ -30,10 +30,10 @@
 	    <input type="button" id="btn-upload" value="Upload" />
 	</form>
 	<div id="fup-info">
-	  <div id="fileInfo">
+	  <div id="file-info">
 	    <div id="file-name"></div>
-	    <div id="fileSize"></div>
-	    <div id="fileType"></div>
+	    <div id="file-size"></div>
+	    <div id="file-type"></div>
 	  </div>
 	  <div id="progressIndicator">
 	    <div id="progressBar" class="floatLeft"></div>
@@ -45,7 +45,7 @@
 	      <div id="transferBytesInfo" class="floatRight" style="text-align: right;">&nbsp;</div>
 	      <div class="clear"></div>
 	    </div>    
-	    <div id="uploadResponse"></div>
+	    <div id="upload-response"></div>
 	  </div>  
 	</div>
 </div>
@@ -121,7 +121,7 @@
 
 	  function uploadFile(file) {
 	    previousBytesLoaded = 0;
-	    document.getElementById('uploadResponse').style.display = 'none';
+	    $('#upload-response').css('display', 'none');
 	    document.getElementById('progressNumber').innerHTML = '';
 	    var progressBar = document.getElementById('progressBar');
 	    progressBar.style.display = 'block';
@@ -163,13 +163,6 @@
 	    document.getElementById('timeRemainingInfo').innerHTML = '| ' + secondsToString(secondsRemaining);        
 	  }
 
-	  function secondsToString(seconds) {        
-	    var h = Math.floor(seconds / 3600);
-	    var m = Math.floor(seconds % 3600 / 60);
-	    var s = Math.floor(seconds % 3600 % 60);
-	    return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
-	  }
-
 	  function uploadProgress(evt) {
 	    if (evt.lengthComputable) {
 	      bytesUploaded = evt.loaded;
@@ -200,9 +193,9 @@
 
 	  function uploadComplete(evt) {
 	    clearInterval(intervalTimer);
-	    var uploadResponse = document.getElementById('uploadResponse');
-	    uploadResponse.innerHTML = evt.target.responseText;
-	    uploadResponse.style.display = 'block';
+	    var uploadResponse = $('#upload-response');
+	    uploadResponse.html(evt.target.responseText);
+	    uploadResponse.css('display', 'block');
 	  }  
 	
 	  function uploadFailed(evt) {
@@ -215,6 +208,13 @@
 	    alert("The upload has been canceled by the user or the browser dropped the connection.");  
 	  }  
 	  
+	  function secondsToString(seconds) {        
+	    var h = Math.floor(seconds / 3600);
+	    var m = Math.floor(seconds % 3600 / 60);
+	    var s = Math.floor(seconds % 3600 % 60);
+	    return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
+	  }
+
 		return {
 
 			fileSelected: function(){
@@ -226,10 +226,10 @@
 		    else{
 		      fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
 		    }
-		    $('#fileInfo').css('display', 'block');
+		    $('#file-info').css('display', 'block');
 		    $('#file-name').html('Name: ' + file.name);
-		    $('#fileSize').html('Size: ' + fileSize);
-		    $('#fileType').html('Type: ' + file.type);
+		    $('#file-size').html('Size: ' + fileSize);
+		    $('#file-type').html('Type: ' + file.type);
 			},
 			
 			uploadFiles: function(){
