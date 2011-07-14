@@ -35,14 +35,14 @@
 	    <div id="file-size"></div>
 	    <div id="file-type"></div>
 	  </div>
-	  <div id="progressIndicator">
-	    <div id="progressBar" class="floatLeft"></div>
-	    <div id="progressNumber" class="floatRight">&nbsp;</div>
+	  <div id="progress-indicator">
+	    <div id="progress-bar" class="floatLeft"></div>
+	    <div id="progress-number" class="floatRight">&nbsp;</div>
 	    <div class="clear"></div>
 	    <div>
-	      <div id="transferSpeedInfo" class="floatLeft" style="width: 80px;">&nbsp;</div>
-	      <div id="timeRemainingInfo" class="floatLeft" style="margin-left: 10px;">&nbsp;</div>
-	      <div id="transferBytesInfo" class="floatRight" style="text-align: right;">&nbsp;</div>
+	      <div id="transfer-speed-info" class="floatLeft" style="width: 80px;">&nbsp;</div>
+	      <div id="time-remaining-info" class="floatLeft" style="margin-left: 10px;">&nbsp;</div>
+	      <div id="transfer-bytes-info" class="floatRight" style="text-align: right;">&nbsp;</div>
 	      <div class="clear"></div>
 	    </div>    
 	    <div id="upload-response"></div>
@@ -122,10 +122,10 @@
 	  function uploadFile(file) {
 	    previousBytesLoaded = 0;
 	    $('#upload-response').css('display', 'none');
-	    document.getElementById('progressNumber').innerHTML = '';
-	    var progressBar = document.getElementById('progressBar');
-	    progressBar.style.display = 'block';
-	    progressBar.style.width = '0px';        
+	    $('#progress-number').html('');
+	    var progressBar = $('#progress-bar');
+	    progressBar.css('display', 'block');
+	    progressBar.css('width', '0px');        
 	
 	    /* upload file along with arbitary data that is not in the form */
 	    var fd = new FormData();
@@ -159,8 +159,8 @@
 	      speed =  (Math.round(bytesDiff * 100/1024)/100).toString() + 'KBps';
 	    else
 	      speed = bytesDiff.toString() + 'Bps';
-	    document.getElementById('transferSpeedInfo').innerHTML = speed;
-	    document.getElementById('timeRemainingInfo').innerHTML = '| ' + secondsToString(secondsRemaining);        
+	    $('#transfer-speed-info').html(speed);
+	    $('#time-remaining-info').html('| ' + secondsToString(secondsRemaining));        
 	  }
 
 	  function uploadProgress(evt) {
@@ -175,20 +175,19 @@
 	        bytesTransfered = (Math.round(bytesUploaded * 100/1024)/100).toString() + 'KB';
 	      else
 	        bytesTransfered = (Math.round(bytesUploaded * 100)/100).toString() + 'Bytes';
-	      document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
-	      document.getElementById('progressBar').style.width = (percentComplete * 3.55).toString() + 'px';
-	      document.getElementById('transferBytesInfo').innerHTML = bytesTransfered;
+	      $('#progress-number').html(percentComplete.toString() + '%');
+	      $('#progress-bar').css('width', (percentComplete * 3.55).toString() + 'px');
+	      $('#transfer-bytes-info').html(bytesTransfered);
 	      if (percentComplete == 100) {
-	        document.getElementById('progressInfo').style.display = 'none';
-	        var uploadResponse = document.getElementById('uploadResponse');
-	        uploadResponse.innerHTML = '<span style="font-size: 18pt; font-weight: bold;">Please wait...</span>';
-	        uploadResponse.style.display = 'block';
+	        document.getElementById('progress-info').css('none');
+	        var uploadResponse = $('#upload-response');
+	        uploadResponse.html('<span style="font-size: 18pt; font-weight: bold;">Please wait...</span>');
+	        uploadResponse.css('display', 'block');
 	      }
 	    }
 	    else {
-	      document.getElementById('progressBar').innerHTML = 'unable to compute';
+	      $('#progress-bar').html('unable to compute');
 	    }  
-	
 	  }
 
 	  function uploadComplete(evt) {
