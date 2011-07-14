@@ -4,144 +4,151 @@
 	<title>File Upload using HTML5 with Flash fallback</title>
 
 	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="fup/nysi.core.js"></script>
 
 	<script type="text/javascript">
 	  var pathToUpload = "http://mylaptop/pt/fileupload/fup.php"
 	</script>
 	
 	<script type="text/javascript">
-	  var bytesUploaded = 0;
-	  var bytesTotal = 0;
-	  var previousBytesLoaded = 0;
-	  var intervalTimer = 0;
+
+		NYSI.namespace("html5");
+
+		NYSI.html5 = function(){
+
+		  var bytesUploaded = 0;
+		  var bytesTotal = 0;
+		  var previousBytesLoaded = 0;
+		  var intervalTimer = 0;
+
+		  function uploadFile(file) {
+		    previousBytesLoaded = 0;
+		    document.getElementById('uploadResponse').style.display = 'none';
+		    document.getElementById('progressNumber').innerHTML = '';
+		    var progressBar = document.getElementById('progressBar');
+		    progressBar.style.display = 'block';
+		    progressBar.style.width = '0px';        
+		
+		    /* upload file along with arbitary data that is not in the form */
+		    var fd = new FormData();
+		    fd.append("author", "yitao");
+		    fd.append("name", "Html 5 File API/FormData");
+		    fd.append("Filedata", file);
+		
+		    var xhr = new XMLHttpRequest();        
+		    xhr.upload.addEventListener("progress", uploadProgress, false);
+		    xhr.addEventListener("load", uploadComplete, false);
+		    xhr.addEventListener("error", uploadFailed, false);
+		    xhr.addEventListener("abort", uploadCanceled, false);
+		    xhr.open("POST", pathToUpload);
+		
+		    xhr.send(fd);
+		    intervalTimer = setInterval(updateTransferSpeed, 500);
+		  }
+
+		  function updateTransferSpeed() {
+		    var currentBytes = bytesUploaded;
+		    var bytesDiff = currentBytes - previousBytesLoaded;
+		    if (bytesDiff == 0) return;
+		    previousBytesLoaded = currentBytes;
+		    bytesDiff = bytesDiff * 2;
+		    var bytesRemaining = bytesTotal - previousBytesLoaded;
+		    var secondsRemaining = bytesRemaining / bytesDiff;
+		    var speed = "";
+		    if (bytesDiff > 1024 * 1024)
+		      speed = (Math.round(bytesDiff * 100/(1024*1024))/100).toString() + 'MBps';
+		    else if (bytesDiff > 1024)
+		      speed =  (Math.round(bytesDiff * 100/1024)/100).toString() + 'KBps';
+		    else
+		      speed = bytesDiff.toString() + 'Bps';
+		    document.getElementById('transferSpeedInfo').innerHTML = speed;
+		    document.getElementById('timeRemainingInfo').innerHTML = '| ' + secondsToString(secondsRemaining);        
+		  }
 	
-	  function fileSelected() {
-	    var file = document.getElementById('fileToUpload').files[0];
-	    var fileSize = 0;
-	    if (file.size > 1024 * 1024)
-	      fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
-	    else
-	      fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
-	    document.getElementById('fileInfo').style.display = 'block';
-	    document.getElementById('fileName').innerHTML = 'Name: ' + file.name;
-	    document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
-	    document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
-	  }
+		  function secondsToString(seconds) {        
+		    var h = Math.floor(seconds / 3600);
+		    var m = Math.floor(seconds % 3600 / 60);
+		    var s = Math.floor(seconds % 3600 % 60);
+		    return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
+		  }
 	
-	  
-		function uploadFiles () {
-			var files = document.getElementById('fileToUpload').files;
-			if (typeof files !== "undefined") {
-				for (var i=0, l=files.length; i<l; i++) {
-					uploadFile(files[i]);
+		  function uploadProgress(evt) {
+		    if (evt.lengthComputable) {
+		      bytesUploaded = evt.loaded;
+		      bytesTotal = evt.total;
+		      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+		      var bytesTransfered = '';
+		      if (bytesUploaded > 1024*1024)
+		        bytesTransfered = (Math.round(bytesUploaded * 100/(1024*1024))/100).toString() + 'MB';
+		      else if (bytesUploaded > 1024)
+		        bytesTransfered = (Math.round(bytesUploaded * 100/1024)/100).toString() + 'KB';
+		      else
+		        bytesTransfered = (Math.round(bytesUploaded * 100)/100).toString() + 'Bytes';
+		      document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
+		      document.getElementById('progressBar').style.width = (percentComplete * 3.55).toString() + 'px';
+		      document.getElementById('transferBytesInfo').innerHTML = bytesTransfered;
+		      if (percentComplete == 100) {
+		        document.getElementById('progressInfo').style.display = 'none';
+		        var uploadResponse = document.getElementById('uploadResponse');
+		        uploadResponse.innerHTML = '<span style="font-size: 18pt; font-weight: bold;">Please wait...</span>';
+		        uploadResponse.style.display = 'block';
+		      }
+		    }
+		    else {
+		      document.getElementById('progressBar').innerHTML = 'unable to compute';
+		    }  
+		
+		  }
+	
+		  function uploadComplete(evt) {
+		    clearInterval(intervalTimer);
+		    var uploadResponse = document.getElementById('uploadResponse');
+		    uploadResponse.innerHTML = evt.target.responseText;
+		    uploadResponse.style.display = 'block';
+		  }  
+		
+		  function uploadFailed(evt) {
+		    clearInterval(intervalTimer);
+		    alert("An error occurred while uploading the file.");  
+		  }  
+		
+		  function uploadCanceled(evt) {
+		    clearInterval(intervalTimer);
+		    alert("The upload has been canceled by the user or the browser dropped the connection.");  
+		  }  
+		  
+			return {
+
+				fileSelected: function(){
+			    var file = document.getElementById('fileToUpload').files[0]; 
+			    var fileSize = 0;
+			    if (file.size > 1024 * 1024){
+			      fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+			    }
+			    else{
+			      fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
+			    }
+			    document.getElementById('fileInfo').style.display = 'block';
+			    document.getElementById('fileName').innerHTML = 'Name: ' + file.name;
+			    document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
+			    document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
+				},
+				
+				uploadFiles: function(){
+					var files = document.getElementById('fileToUpload').files;
+					if (typeof files !== "undefined") {
+						for (var i=0, l=files.length; i<l; i++) {
+							uploadFile(files[i]);
+						}
+					}
+					else {
+						fileList.innerHTML = "No support for the File API in this web browser";
+					}	
 				}
-			}
-			else {
-				fileList.innerHTML = "No support for the File API in this web browser";
-			}	
-		}
-	
-	  function uploadFile(file) {
-	    previousBytesLoaded = 0;
-	    document.getElementById('uploadResponse').style.display = 'none';
-	    document.getElementById('progressNumber').innerHTML = '';
-	    var progressBar = document.getElementById('progressBar');
-	    progressBar.style.display = 'block';
-	    progressBar.style.width = '0px';        
-	
-	    /* upload file along with arbitary data that is not in the form */
-	    var fd = new FormData();
-	    fd.append("author", "yitao");
-	    fd.append("name", "Html 5 File API/FormData");
-	    fd.append("Filedata", file);
-	
-	    var xhr = new XMLHttpRequest();        
-	    xhr.upload.addEventListener("progress", uploadProgress, false);
-	    xhr.addEventListener("load", uploadComplete, false);
-	    xhr.addEventListener("error", uploadFailed, false);
-	    xhr.addEventListener("abort", uploadCanceled, false);
-	    xhr.open("POST", pathToUpload);
-	
-	    xhr.send(fd);
-	    intervalTimer = setInterval(updateTransferSpeed, 500);
-	  }
-	
-	
-	  function updateTransferSpeed() {
-	    var currentBytes = bytesUploaded;
-	    var bytesDiff = currentBytes - previousBytesLoaded;
-	    if (bytesDiff == 0) return;
-	    previousBytesLoaded = currentBytes;
-	    bytesDiff = bytesDiff * 2;
-	    var bytesRemaining = bytesTotal - previousBytesLoaded;
-	    var secondsRemaining = bytesRemaining / bytesDiff;
-	    var speed = "";
-	    if (bytesDiff > 1024 * 1024)
-	      speed = (Math.round(bytesDiff * 100/(1024*1024))/100).toString() + 'MBps';
-	    else if (bytesDiff > 1024)
-	      speed =  (Math.round(bytesDiff * 100/1024)/100).toString() + 'KBps';
-	    else
-	      speed = bytesDiff.toString() + 'Bps';
-	    document.getElementById('transferSpeedInfo').innerHTML = speed;
-	    document.getElementById('timeRemainingInfo').innerHTML = '| ' + secondsToString(secondsRemaining);        
-	  }
-	
-	
-	
-	  function secondsToString(seconds) {        
-	    var h = Math.floor(seconds / 3600);
-	    var m = Math.floor(seconds % 3600 / 60);
-	    var s = Math.floor(seconds % 3600 % 60);
-	    return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
-	  }
-	
-	
-	
-	  function uploadProgress(evt) {
-	    if (evt.lengthComputable) {
-	      bytesUploaded = evt.loaded;
-	      bytesTotal = evt.total;
-	      var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-	      var bytesTransfered = '';
-	      if (bytesUploaded > 1024*1024)
-	        bytesTransfered = (Math.round(bytesUploaded * 100/(1024*1024))/100).toString() + 'MB';
-	      else if (bytesUploaded > 1024)
-	        bytesTransfered = (Math.round(bytesUploaded * 100/1024)/100).toString() + 'KB';
-	      else
-	        bytesTransfered = (Math.round(bytesUploaded * 100)/100).toString() + 'Bytes';
-	      document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
-	      document.getElementById('progressBar').style.width = (percentComplete * 3.55).toString() + 'px';
-	      document.getElementById('transferBytesInfo').innerHTML = bytesTransfered;
-	      if (percentComplete == 100) {
-	        document.getElementById('progressInfo').style.display = 'none';
-	        var uploadResponse = document.getElementById('uploadResponse');
-	        uploadResponse.innerHTML = '<span style="font-size: 18pt; font-weight: bold;">Please wait...</span>';
-	        uploadResponse.style.display = 'block';
-	      }
-	    }
-	    else {
-	      document.getElementById('progressBar').innerHTML = 'unable to compute';
-	    }  
-	
-	  }
-	
-	  function uploadComplete(evt) {
-	    clearInterval(intervalTimer);
-	    var uploadResponse = document.getElementById('uploadResponse');
-	    uploadResponse.innerHTML = evt.target.responseText;
-	    uploadResponse.style.display = 'block';
-	  }  
-	
-	  function uploadFailed(evt) {
-	    clearInterval(intervalTimer);
-	    alert("An error occurred while uploading the file.");  
-	  }  
-	
-	  function uploadCanceled(evt) {
-	    clearInterval(intervalTimer);
-	    alert("The upload has been canceled by the user or the browser dropped the connection.");  
-	  }  
-	
+			};		
+		}();
+
+
 	</script>
 
 	<link href="uploadify/uploadify.css" type="text/css" rel="stylesheet" />
@@ -169,10 +176,10 @@
 <div id="html5"> 
 	<form id="fup-form">
 	  <div class="row">
-	    <input type="file" name="fileToUpload" id="fileToUpload" onchange="fileSelected()" multiple/>
+	    <input type="file" name="fileToUpload" id="fileToUpload" onchange="NYSI.html5.fileSelected()" multiple/>
 	  </div>
 	  <div class="row">
-	    <input type="button" value="Upload" onclick="uploadFiles()" />
+	    <input type="button" value="Upload" onclick="NYSI.html5.uploadFiles()" />
 	  </div>
 	</form>
 	<div id="fup-info">
