@@ -25,12 +25,9 @@
 
 <div id="html5-impl" class="html-polyfills"> 
 	<form id="fup-form">
-	  <div class="row">
 	    <input type="file" id="file-to-upload" multiple/>
-	  </div>
-	  <div class="row">
+	    <br/>
 	    <input type="button" id="btn-upload" value="Upload" />
-	  </div>
 	</form>
 	<div id="fup-info">
 	  <div id="fileInfo">
@@ -53,8 +50,9 @@
 	</div>
 </div>
 
+<!-- two musts:  client-side:  id="file_upload" and server-side: $file_id='Filedata' -->
 <div id="flash-impl" class="html-polyfills"> 
-	<input type="file" id="file_upload" name="file_upload" />
+	<input type="file" id="file_upload" />
 	<input type="button" id="btn_upload" value="Upload" />
 </div>
 
@@ -64,7 +62,6 @@
 
 		if (!!window.FileReader && Modernizr.draganddrop) {
 			initHtml5();
-			initFlash();
 		}
 		else{
 			initFlash();
