@@ -3,8 +3,22 @@
 <head>
 	<title>File Upload using HTML5 with Flash fallback</title>
 
-	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
+
+	<!-- leverage CDN or user's exiting cache first with fallback on local -->
+	<script type="text/javascript">
+		Modernizr.load([
+			{
+			  load: 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js',
+			  complete: function () {
+			    if (!window.jQuery) {
+			      Modernizr.load('fup/jquery-1.6.2.min.js');
+			    }
+			  }
+			}
+		]);		
+	</script>
+
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 
 	<script type="text/javascript" src="uploadify/swfobject.js"></script>

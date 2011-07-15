@@ -26,10 +26,7 @@ NYSI.namespace = function() {
  * Other core functionalities should follow below using the NYSI.namespace.
  */
 
-DEBUG = false; // set to false to disable debugging
-old_console_log = console.log;
-console.log = function() {
-  if(DEBUG) {
-  	old_console_log.apply(this, arguments);
-  }
+DEBUG = true; // set to false to disable debugging by overiding the default console function
+if(!DEBUG){
+	console.log = function(){};
 }
