@@ -4,26 +4,8 @@
 	<title>File Upload using HTML5 with Flash fallback</title>
 
 	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
-
-	<!-- leverage CDN or user's exiting cache first with fallback on local -->
-	<script type="text/javascript">
-		Modernizr.load([
-			{
-			  load: 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js',
-			  complete: function () {
-			    if (!window.jQuery) {
-			      Modernizr.load('fup/jquery-1.6.2.min.js');
-			    }
-			  }
-			}
-		]);		
-	</script>
-
+	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
-
-	<script type="text/javascript" src="uploadify/swfobject.js"></script>
-	<script type="text/javascript" src="uploadify/jquery.uploadify.v2.1.4.min.js"></script>
-
 
 	<style>
 	.html-polyfills { display: none; }
@@ -74,19 +56,14 @@
 
 		Modernizr.load({
 		  test: !!window.FileReader && Modernizr.draganddrop,
-		  yep: {
-		    'html5js': 'fup/nysi.html5.js'
-		  },
-		  nope: {
-		    'flashcss': 'uploadify/uploadify.css',
-		    'flashjs': 'fup/nysi.flash.js'
-		  },
-		  callback: {
-		    'html5js': function (url, result, key) {
+		  yep: ['fup/nysi.html5.js'],
+		  nope:['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'],
+		  callback: function (url, result, key){
+		    if (url === 'fup/nysi.html5.js') {
 		      console.log('using HTML5!');
 		      initHtml5();
-		    },
-		    'flashjs': function (url, result, key) {
+		    }
+		    else if (url === 'fup/nysi.flash.js'){
 		      console.log('using flash!');
      			initFlash();
 		    }
