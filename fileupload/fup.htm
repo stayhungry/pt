@@ -5,14 +5,11 @@
 
 	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="fup/modernizr-2.0.6.js"></script>
+	<script type="text/javascript" src="fup/yepnope-1.0.2.min.js"></script>
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 
-	<script type="text/javascript" src="fup/nysi.html5.js"></script>
-
-	<link type="text/css" href="uploadify/uploadify.css" rel="stylesheet" />
 	<script type="text/javascript" src="uploadify/swfobject.js"></script>
 	<script type="text/javascript" src="uploadify/jquery.uploadify.v2.1.4.min.js"></script>
-	<script type="text/javascript" src="fup/nysi.flash.js"></script>
 
 
 	<style>
@@ -59,13 +56,33 @@
 <script type="text/javascript">
   var pathToUpload = "http://mylaptop/pt/fileupload/fup.php"
 
+
 	$(document).ready(function(){
-		if (!!window.FileReader && Modernizr.draganddrop) {
-			initHtml5();
-		}
-		else{
-			initFlash();
-		}
+
+		yepnope({
+		  test: !!window.FileReader && Modernizr.draganddrop,
+		  yep: {
+		    'html5js': 'fup/nysi.html5.js'
+		  },
+		  nope: {
+		    'flashcss': 'uploadify/uploadify.css',
+		    'flashjs': 'fup/nysi.flash.js'
+		  },
+		  callback: {
+		    'html5js': function (url, result, key) {
+		      alert('This is the regular styles!');
+		      initHtml5();
+		    },
+		    'flashjs': function (url, result, key) {
+		      alert('This is the modified styles!');
+     			initFlash();
+		    }
+		  },
+		  complete: function () {
+		    //alert('Everything has loaded in this test object!');
+		  }
+		});
+		
 	});
 
 
