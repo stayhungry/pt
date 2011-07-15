@@ -4,6 +4,7 @@
 	<title>File Upload using HTML5 with Flash fallback</title>
 
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
+	<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
 	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
 	<script type="text/javascript">
 		yepnope.errorTimeout = 2000; // set to 2 seconds error timeout
@@ -40,7 +41,22 @@
 	</script>
 
 	<style>
-	.html-polyfills { display: none; }
+		.html-polyfills { display: none; }
+
+		#file-list .progress-bar-container {
+			width: 400px;
+			height: 10px;
+			border: 1px solid #555;
+			margin-bottom: 20px;
+		}
+	
+		#file-list .progress-bar {
+			width: 0;
+			height: 10px;
+			font-weight: bold;
+			background: #6787e3;
+		}
+		
 	</style>
 
 </head>
@@ -53,25 +69,7 @@
 	    <br/>
 	    <input type="button" id="btn-upload" value="Upload" />
 	</form>
-	<div id="fup-info">
-	  <div id="file-info">
-	    <div id="file-name"></div>
-	    <div id="file-size"></div>
-	    <div id="file-type"></div>
-	  </div>
-	  <div id="progress-indicator">
-	    <div id="progress-bar" class="floatLeft"></div>
-	    <div id="progress-number" class="floatRight">&nbsp;</div>
-	    <div class="clear"></div>
-	    <div>
-	      <div id="transfer-speed-info" class="floatLeft" style="width: 80px;">&nbsp;</div>
-	      <div id="time-remaining-info" class="floatLeft" style="margin-left: 10px;">&nbsp;</div>
-	      <div id="transfer-bytes-info" class="floatRight" style="text-align: right;">&nbsp;</div>
-	      <div class="clear"></div>
-	    </div>    
-	    <div id="upload-response"></div>
-	  </div>  
-	</div>
+	<div id="file-list"></div>
 </div>
 
 <!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
@@ -112,7 +110,7 @@
 		var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
 		$('#file-to-upload').bind({
 			change: function(e) {
-				nysiFileUpload.fileSelected();
+				nysiFileUpload.showFiles();
 				e.preventDefault();
 			}
 		});
@@ -135,6 +133,26 @@
 	
 
 </script>
+
+
+<!-- mustache templates -->
+<script id="tpl-file-list" type="x-tmpl-mustache">
+
+	<ul>
+    {{#files}}
+    <li>
+			<div>{{fileName}} ({{fileSize}}) ({{fileType}})</div>
+			<div class="progress-bar-container">
+				<div id="progress-bar-{{fileId}}" class="progress-bar">
+				</div>
+				<div id="upload-response-{{fileId}}"></div>
+			</div>
+		</li>
+    {{/files}}
+  </ul>
+
+</script>
+
 
 </body>
 </html>
