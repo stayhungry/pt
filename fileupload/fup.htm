@@ -88,7 +88,7 @@
 		var resHtml5 = ['fup/nysi.html5.js'];
 		var resPolyfill = ['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'];
 		
-		$(document).ready(function(){
+		$(function(){
 			Modernizr.load({
 			  test: featureTest,
 			  yep: resHtml5,
@@ -99,7 +99,7 @@
 			      initHtml5();
 			    }
 			    else if (url === resPolyfill[resPolyfill.length - 1]){
-			      console.log('using Ployfill!');
+			      console.log('using Polyfill!');
 	     			initPolyfill();
 			    }
 			  }
