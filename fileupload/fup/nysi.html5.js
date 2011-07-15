@@ -17,16 +17,16 @@ NYSI.html5.filemgr.bootstrap = function(){
 
     var xhr = new XMLHttpRequest();        
     xhr.upload.addEventListener("progress", function(evt){uploadProgress(evt, id)}, false);
-    xhr.addEventListener("load", uploadComplete, false);
-    xhr.addEventListener("error", uploadFailed, false);
-    xhr.addEventListener("abort", uploadCanceled, false);
+    xhr.addEventListener("load", function(evt){uploadComplete(evt, id)}, false);
+    xhr.addEventListener("error", function(evt){uploadFailed(evt, id)}, false);
+    xhr.addEventListener("abort", function(evt){uploadCanceled(evt, id)}, false);
     xhr.open("POST", pathToUpload);
 
     xhr.send(fd);
   }
 
   function uploadProgress(evt, id) {
-    var progressBar = $('#progress-bar-'+id);
+    var progressBar = $('#progress-bar-' + id);
     if (evt.lengthComputable) {
       var percentComplete = Math.round(evt.loaded * 100 / evt.total);
     	console.log("file" + id + " upload in progress: " + percentComplete + "%");	
@@ -37,18 +37,21 @@ NYSI.html5.filemgr.bootstrap = function(){
     }  
   }
 
-  function uploadComplete(evt) {
-    var uploadResponse = $('#upload-response');
+  function uploadComplete(evt, id) {
+    var progressBar = $('#progress-bar-' + id);
+		progressBar.css('width', "100%");
+    var uploadResponse = $('#upload-response-' + id);
     uploadResponse.html(evt.target.responseText);
-    uploadResponse.css('display', 'block');
   }  
 
-  function uploadFailed(evt) {
-    alert("An error occurred while uploading the file.");  
+  function uploadFailed(evt, id) {
+    var uploadResponse = $('#upload-response-' + id);
+    uploadResponse.html("An error occurred while uploading the file.");
   }  
 
-  function uploadCanceled(evt) {
-    alert("The upload has been canceled by the user or the browser dropped the connection.");  
+  function uploadCanceled(evt, id) {
+    var uploadResponse = $('#upload-response-' + id);
+    uploadResponse.html("The upload has been canceled by the user or the browser dropped the connection.");
   }  
   
   function secondsToString(seconds) {        
