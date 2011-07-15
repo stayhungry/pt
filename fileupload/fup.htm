@@ -4,8 +4,7 @@
 	<title>File Upload using HTML5 with Flash fallback</title>
 
 	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="fup/modernizr-2.0.6.js"></script>
-	<script type="text/javascript" src="fup/yepnope-1.0.2.min.js"></script>
+	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 
 	<script type="text/javascript" src="uploadify/swfobject.js"></script>
@@ -59,7 +58,7 @@
 
 	$(document).ready(function(){
 
-		yepnope({
+		Modernizr.load({
 		  test: !!window.FileReader && Modernizr.draganddrop,
 		  yep: {
 		    'html5js': 'fup/nysi.html5.js'
