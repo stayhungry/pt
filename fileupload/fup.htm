@@ -3,9 +3,41 @@
 <head>
 	<title>File Upload using HTML5 with Flash fallback</title>
 
-	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
-	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
+	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
+	<script type="text/javascript">
+		yepnope.errorTimeout = 2000; // 2 sec
+	</script>
+
+	<!-- for performance, let us leverage CDN or user's existing cache first,  with fallback to our own server -->
+	<script type="text/javascript">
+		Modernizr.load([
+			{
+			  load: 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js',
+			  callback: function(url, result, key){
+			    if (window.jQuery) {
+				    console.log('loading from Google API succeeded,  app starts. ');
+				    initApp();
+			    }
+			    else{
+			    	console.log('loading from Google API failed,  loading from our server instead');
+			      Modernizr.load({
+			      	load: 'fup/jquery-1.6.2.min.js',
+						  callback: function(url, result, key){
+						    if (window.jQuery) {
+							    console.log('loading from our server succeeded,  app starts. ');
+							    initApp();
+						    }
+						    else{
+							    alert('Please refresh the page. ');
+						    }
+						  }
+						})
+			    }
+			  }
+			}
+		]);		
+	</script>
 
 	<style>
 	.html-polyfills { display: none; }
@@ -51,30 +83,25 @@
 <script type="text/javascript">
   var pathToUpload = "http://mylaptop/pt/fileupload/fup.php"
 
-
-	$(document).ready(function(){
-
-		Modernizr.load({
-		  test: !!window.FileReader && Modernizr.draganddrop,
-		  yep: ['fup/nysi.html5.js'],
-		  nope:['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'],
-		  callback: function (url, result, key){
-		    if (url === 'fup/nysi.html5.js') {
-		      console.log('using HTML5!');
-		      initHtml5();
-		    }
-		    else if (url === 'fup/nysi.flash.js'){
-		      console.log('using flash!');
-     			initFlash();
-		    }
-		  },
-		  complete: function () {
-		    //alert('Everything has loaded in this test object!');
-		  }
+	function initApp(){
+		$(document).ready(function(){
+			Modernizr.load({
+			  test: !!window.FileReader && Modernizr.draganddrop,
+			  yep: ['fup/nysi.html5.js'],
+			  nope:['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'],
+			  callback: function (url, result, key){
+			    if (url === 'fup/nysi.html5.js') {
+			      console.log('using HTML5!');
+			      initHtml5();
+			    }
+			    else if (url === 'fup/nysi.flash.js'){
+			      console.log('using flash!');
+	     			initFlash();
+			    }
+			  }
+			});
 		});
-		
-	});
-
+	}
 
 	function initHtml5(){
 		$('#html5-impl').show();
