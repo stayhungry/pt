@@ -41,7 +41,7 @@
 	</script>
 
 	<style>
-		div.hidden {display: none;}
+		.hidden {display: none;}
 
 		div.panel {
 			width: 400px;
@@ -52,6 +52,13 @@
 	    padding: 20px 20px 2px;
 		}
 		
+		#btn-select {
+			font-weight: bold;
+			color: #EEEEEE;
+			background: #666;
+	    padding: 5px 5px 5px;
+		}
+
 		#file-list .progress-bar-container {
 			width: 300px;
 			height: 10px;
@@ -74,11 +81,12 @@
 
 <div id="html5-impl" class="panel hidden"> 
 	<form id="fup-form">
-	    <input type="file" id="file-to-upload" multiple/>
-	    <br/>
-	    <input type="button" id="btn-upload" value="Upload" />
+	    <input type="file" id="file-to-upload" class="hidden" multiple/>
+	    <input type="button" id="btn-select" value="SELECT FILES" />
 	</form>
 	<div id="file-list"></div>
+  <input type="button" id="btn-upload" value="Upload" />
+
 </div>
 
 <!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
@@ -121,6 +129,11 @@
 			change: function(e) {
 				nysiFileUpload.showFiles();
 				e.preventDefault();
+			}
+		});
+		$('#btn-select').bind({
+			click: function(e) {
+				$('#file-to-upload').click();
 			}
 		});
 		$('#btn-upload').bind({

@@ -13,6 +13,7 @@ NYSI.flash.filemgr.bootstrap = function(){
     'folder'    : 'upfiles',
     'auto'      : false,
     'multi'     : true,
+    'removeCompleted' : false,
     'scriptAccess' : 'always'
   });
 };
