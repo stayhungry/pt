@@ -22,11 +22,81 @@ NYSI.namespace = function() {
 	return o;
 };
 
-/**
- * Other core functionalities should follow below using the NYSI.namespace.
- */
 
-DEBUG = true; // set to false to disable debugging by overiding the default console function
-if(!DEBUG){
-	console.log = function(){};
-}
+/**
+ * Util package.
+ */
+NYSI.namespace("util");
+
+NYSI.util.sprintf = function(strTpl, jsonData){
+	if(!!jsonData){
+		return Mustache.to_html(strTpl, jsonData);
+	}
+	else{
+		return strTpl;
+	}
+};
+	
+NYSI.util.loadCDNLocal = function(jsonData){
+	if(!!jsonData){
+		Modernizr.load([
+			{
+			  load: jsonData.cdnUrl,
+			  callback: function(url, result, key){
+			    if (window.jQuery) {
+				    NYSI.log.console('loading from Google API succeeded,  app starts. ');
+				    jsonData.callback();
+			    }
+			    else{
+			    	NYSI.log.console('loading from Google API failed,  loading from our server instead');
+			      Modernizr.load({
+			      	load: jsonData.localUrl,
+						  callback: function(url, result, key){
+						    if (window.jQuery) {
+							    NYSI.log.console('loading from our server succeeded,  app starts. ');
+							    jsonData.callback();;
+						    }
+						    else{
+							    alert('Please refresh the page. ');
+						    }
+						  }
+						})
+			    }
+			  }
+			}
+		]);		
+	}
+};
+
+
+
+/**
+ * Debug package.
+ */
+NYSI.namespace("log");
+
+NYSI.log = function(){
+	// flag to turn on/off debugging
+	var DEBUG = true;  
+	
+	//disable debugging by overiding the default console function
+	if(!DEBUG && console){
+		console.log = function(){};
+	}
+	
+	return {
+		modal:function(strTpl, jsonData){
+			if(DEBUG){
+				alert(NYSI.util.sprintf(strTpl, jsonData));
+			}
+		},	
+
+		console:function(strTpl, jsonData){
+			if(DEBUG){
+				console.log(NYSI.util.sprintf(strTpl, jsonData));
+			}
+		}
+	};
+}();
+
+

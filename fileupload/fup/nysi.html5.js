@@ -29,7 +29,7 @@ NYSI.html5.filemgr.bootstrap = function(){
     var progressBar = $('#progress-bar-' + id);
     if (evt.lengthComputable) {
       var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-    	console.log("file" + id + " upload in progress: " + percentComplete + "%");	
+    	NYSI.log.console("file[{{id}}] upload in progress {{pct}}%.", {'id': id, 'pct': percentComplete});	
 			progressBar.css('width', percentComplete + "%");
     }
     else {
