@@ -36,6 +36,10 @@ NYSI.util.sprintf = function(strTpl, jsonData){
 		return strTpl;
 	}
 };
+
+NYSI.util.isFuncExist = function(func){
+	return (typeof func === 'function');
+}
 	
 NYSI.util.loadCDNLocal = function(jsonData){
 	if(!!jsonData){
@@ -45,7 +49,9 @@ NYSI.util.loadCDNLocal = function(jsonData){
 			  callback: function(url, result, key){
 			    if (window.jQuery) {
 				    NYSI.log.console('loading from Google API succeeded,  app starts. ');
-				    jsonData.callback();
+				    if(NYSI.util.isFuncExist(jsonData.callback)){
+				    	jsonData.callback();
+				    }
 			    }
 			    else{
 			    	NYSI.log.console('loading from Google API failed,  loading from our server instead');
@@ -54,7 +60,9 @@ NYSI.util.loadCDNLocal = function(jsonData){
 						  callback: function(url, result, key){
 						    if (window.jQuery) {
 							    NYSI.log.console('loading from our server succeeded,  app starts. ');
-							    jsonData.callback();;
+							    if(NYSI.util.isFuncExist(jsonData.callback)){
+							    	jsonData.callback();
+							    }
 						    }
 						    else{
 							    alert('Please refresh the page. ');
@@ -68,7 +76,27 @@ NYSI.util.loadCDNLocal = function(jsonData){
 	}
 };
 
-
+NYSI.util.loadAppRes = function(jsonData){
+	Modernizr.load({
+	  test: jsonData.test,
+	  yep: jsonData.modern.resources,
+	  nope: jsonData.legacy.resources,
+	  callback: function (url, result, key){
+	    if (url === jsonData.modern.resources[jsonData.modern.resources.length - 1]) {
+	      NYSI.log.console('using modern(HTML5)!');
+		    if(NYSI.util.isFuncExist(jsonData.modern.callback)){
+		    	jsonData.modern.callback();
+		    }
+	    }
+	    else if (url === jsonData.legacy.resources[jsonData.legacy.resources.length - 1]){
+	      NYSI.log.console('using legacy(Polyfill)!');
+		    if(NYSI.util.isFuncExist(jsonData.legacy.callback)){
+		    	jsonData.legacy.callback();
+		    }
+	    }
+	  }
+	});
+};
 
 /**
  * Debug package.

@@ -9,73 +9,61 @@
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 	<script type="text/javascript" src="fup/nysi.conf.js"></script>
 
-
-<script type="text/javascript">
-
-	function initApp(){
-  	pathToUpload = "http://mylaptop/pt/fileupload/fup.php"
-		var featureTest = !!window.FileReader && Modernizr.draganddrop;
-		var resHtml5 = ['fup/nysi.html5.js'];
-		var resPolyfill = ['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'];
-		
-		$(function(){
-			Modernizr.load({
-			  test: featureTest,
-			  yep: resHtml5,
-			  nope: resPolyfill,
-			  callback: function (url, result, key){
-			    if (url === resHtml5[resHtml5.length - 1]) {
-			      NYSI.log.console('using HTML5!');
-			      initHtml5();
-			    }
-			    else if (url === resPolyfill[resPolyfill.length - 1]){
-			      NYSI.log.console('using Polyfill!');
-	     			initPolyfill();
-			    }
-			  }
-			});
-		});
-	}
-
-	function initHtml5(){
-		$('#html5-impl').show();
-		var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
-		$('#file-to-upload').bind({
-			change: function(e) {
-				nysiFileUpload.showFiles();
-				e.preventDefault();
-			}
-		});
-		$('#btn-select').bind({
-			click: function(e) {
-				$('#file-to-upload').click();
-			}
-		});
-		$('#btn-upload').bind({
-			click: function(e) {
-				nysiFileUpload.uploadFiles();
-			}
-		});
-	}
-
-	function initPolyfill(){
-		$('#flash-impl').show();
-		NYSI.flash.filemgr.bootstrap();
-		$('#btn_upload').bind({
-			click: function(e) {
-				$('#file_upload').uploadifyUpload();
-			}
-		});
-	}
-
-</script>
-
-	<!-- for performance, let us leverage CDN or user's existing cache first,  with fallback to our own server -->
 	<script type="text/javascript">
+
+		var initModern = function(){
+			$('#html5-impl').show();
+			var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
+			$('#file-to-upload').bind({
+				change: function(e) {
+					nysiFileUpload.showFiles();
+					e.preventDefault();
+				}
+			});
+			$('#btn-select').bind({
+				click: function(e) {
+					$('#file-to-upload').click();
+				}
+			});
+			$('#btn-upload').bind({
+				click: function(e) {
+					nysiFileUpload.uploadFiles();
+				}
+			});
+		}
+	
+		var initLegacy = function(){
+			$('#flash-impl').show();
+			NYSI.flash.filemgr.bootstrap();
+			$('#btn_upload').bind({
+				click: function(e) {
+					$('#file_upload').uploadifyUpload();
+				}
+			});
+		}
+
+		var initApp = function(){
+	  	pathToUpload = "http://mylaptop/pt/fileupload/fup.php"
+			
+			$(function(){
+				NYSI.util.loadAppRes({
+					'test': 	!!window.FileReader && Modernizr.draganddrop, 
+					'modern': {
+						resources: ['fup/nysi.html5.js'],
+						callback: initModern
+					},
+					'legacy' : {
+						resources: ['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'],
+						callback: initLegacy
+					}
+				});
+			});
+		}
+	
 		NYSI.util.loadCDNLocal({
-			cdnUrl: 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
-			localUrl: 'fup/jquery-1.6.2.min.js',
-			callback: initApp
+			'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
+			'localUrl': 'fup/jquery-1.6.2.min.js',
+			'callback': initApp
 		});
 	</script>
 
