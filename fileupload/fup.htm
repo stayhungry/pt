@@ -8,11 +8,13 @@
 
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 	<script type="text/javascript" src="fup/nysi.conf.js"></script>
+	<link type="text/css" rel="stylesheet" href="fup/css/nysi.core.css" />
 
 	<script type="text/javascript">
 
 		var initModern = function(){
 			$('#html5-impl').show();
+			$('#flash-impl').hide();
 			var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
 			$('#file-to-upload').bind({
 				change: function(e) {
@@ -34,6 +36,7 @@
 	
 		var initLegacy = function(){
 			$('#flash-impl').show();
+			$('#html5-impl').hide();
 			NYSI.flash.filemgr.bootstrap();
 			$('#btn_upload').bind({
 				click: function(e) {
@@ -49,7 +52,7 @@
 				NYSI.util.loadAppRes({
 					'test': 	!!window.FileReader && Modernizr.draganddrop, 
 					'modern': {
-						resources: ['fup/nysi.html5.js'],
+						resources: ['fup/css/nysi.html5.css', 'fup/nysi.html5.js'],
 						callback: initModern
 					},
 					'legacy' : {
@@ -67,42 +70,6 @@
 		});
 	</script>
 
-	<style>
-		.hidden {display: none;}
-
-		div.panel {
-			width: 400px;
-			min-height:200px;
-	    background: -moz-linear-gradient(center top , #FFFFFF 0%, #F4F4F4 100%) repeat scroll 0 0 transparent;
-	    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
-	    margin: 0 0 20px;
-	    padding: 20px 20px 2px;
-		}
-		
-		#btn-select {
-			font-family: Verdana, Gadget, sans-serif;
-			font-weight: bold;
-			color: #EEEEEE;
-			background: #666;
-	    padding: 5px 5px 5px;
-		}
-
-		#file-list .progress-bar-container {
-			width: 300px;
-			height: 10px;
-			border: 1px solid #555;
-			margin-bottom: 20px;
-		}
-	
-		#file-list .progress-bar {
-			width: 0;
-			height: 10px;
-			font-weight: bold;
-			background: #6787e3;
-		}
-		
-	</style>
-
 </head>
 
 <body>
@@ -114,7 +81,6 @@
 	</form>
 	<div id="file-list"></div>
   <input type="button" id="btn-upload" value="Upload" />
-
 </div>
 
 <!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
