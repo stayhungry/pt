@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>File Upload using HTML5 with Flash fallback</title>
+
+	<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
+	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
+
+	<script type="text/javascript" src="fup/nysi.core.js"></script>
+	<script type="text/javascript" src="fup/nysi.conf.js"></script>
+	<link type="text/css" rel="stylesheet" href="fup/nysi.core.css" />
+
+	<script type="text/javascript">
+
+		var initModern = function(){
+			$('#html5-impl').show();
+			$('#flash-impl').hide();
+			var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
+			$('#file-to-upload').bind({
+				change: function(e) {
+					nysiFileUpload.showFiles();
+					e.preventDefault();
+				}
+			});
+			$('#btn-select').bind({
+				click: function(e) {
+					$('#file-to-upload').click();
+				}
+			});
+			$('#btn-upload').bind({
+				click: function(e) {
+					nysiFileUpload.uploadFiles();
+				}
+			});
+		}
+	
+		var initLegacy = function(){
+			$('#flash-impl').show();
+			$('#html5-impl').hide();
+			NYSI.flash.filemgr.bootstrap();
+			$('#btn_upload').bind({
+				click: function(e) {
+					$('#file_upload').uploadifyUpload();
+				}
+			});
+		}
+
+		var initApp = function(){
+	  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
+			
+			$(function(){
+				NYSI.util.loadAppRes({
+					'test': 	!!window.FileReader && Modernizr.draganddrop, 
+					'modern': {
+						resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js'],
+						callback: initModern
+					},
+					'legacy' : {
+						resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js'],
+						callback: initLegacy
+					}
+				});
+			});
+		}
+	
+		NYSI.util.loadCDNLocal({
+			'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
+			'localUrl': 'fup/jquery-1.6.2.min.js',
+			'callback': initApp
+		});
+	</script>
+
+</head>
+
+<body>
+
+<div id="html5-impl" class="panel hidden"> 
+	<form id="fup-form">
+	    <input type="file" id="file-to-upload" class="hidden" multiple/>
+	    <input type="button" id="btn-select" value="SELECT FILES" />
+	</form>
+	<div id="file-list"></div>
+  <input type="button" id="btn-upload" value="Upload" />
+</div>
+
+<!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
+<div id="flash-impl" class="panel hidden"> 
+	<input type="file" id="file_upload" />
+	<input type="button" id="btn_upload" value="Upload" />
+</div>
+
+
+<!-- mustache templates -->
+<script id="tpl-file-list" type="x-tmpl-mustache">
+
+	<ul>
+    {{#files}}
+    <li>
+			<div>{{fileName}} ({{fileSize}}) ({{fileType}})</div>
+			<div class="progress-bar-container">
+				<div id="progress-bar-{{fileId}}" class="progress-bar">
+				</div>
+				<div id="upload-response-{{fileId}}"></div>
+			</div>
+		</li>
+    {{/files}}
+  </ul>
+
+</script>
+
+
+</body>
+</html>
