@@ -8,7 +8,7 @@
 
 	<script type="text/javascript" src="fup/nysi.core.js"></script>
 	<script type="text/javascript" src="fup/nysi.conf.js"></script>
-	<link type="text/css" rel="stylesheet" href="fup/css/nysi.core.css" />
+	<link type="text/css" rel="stylesheet" href="fup/nysi.core.css" />
 
 	<script type="text/javascript">
 
@@ -52,11 +52,11 @@
 				NYSI.util.loadAppRes({
 					'test': 	!!window.FileReader && Modernizr.draganddrop, 
 					'modern': {
-						resources: ['fup/css/nysi.html5.css', 'fup/nysi.html5.js'],
+						resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js'],
 						callback: initModern
 					},
 					'legacy' : {
-						resources: ['uploadify/swfobject.js', 'uploadify/jquery.uploadify.v2.1.4.min.js', 'uploadify/uploadify.css', 'fup/nysi.flash.js'],
+						resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js'],
 						callback: initLegacy
 					}
 				});
