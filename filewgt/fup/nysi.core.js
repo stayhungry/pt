@@ -94,7 +94,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 			{
 			  load: jsonData.cdnUrl,
 			  callback: function(url, result, key){
-			    if (window.jQuery) {
+			    if (eval(jsonData.test)) {
 				    NYSI.log.console('loading from Google API succeeded,  app starts. ');
 				    if(NYSI.util.isFnExist(jsonData.callback)){
 				    	jsonData.callback();
@@ -105,7 +105,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 			      Modernizr.load({
 			      	load: jsonData.localUrl,
 						  callback: function(url, result, key){
-						    if (window.jQuery) {
+						    if (eval(jsonData.test)) {
 							    NYSI.log.console('loading from our server succeeded,  app starts. ');
 							    if(NYSI.util.isFnExist(jsonData.callback)){
 							    	jsonData.callback();
@@ -161,6 +161,7 @@ NYSI.framework.jQueryBootStrap = function(app){
 	NYSI.util.loadCDNLocal({
 		'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
 		'localUrl': 'fup/jquery-1.6.2.min.js',
+		'test': 'window.jQuery',
 		'callback': app.start
 	});
 }
