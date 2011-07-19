@@ -22,6 +22,36 @@ NYSI.namespace = function() {
 	return o;
 };
 
+/**
+ * Debug package.
+ */
+NYSI.namespace("log");
+
+NYSI.log = function(){
+	// flag to turn on/off debugging
+	var DEBUG = true;  
+	
+	//disable debugging by overiding the default console function
+	if(!DEBUG && console){
+		console.log = function(){};
+	}
+	
+	return {
+		modal:function(strTpl, jsonData){
+			if(DEBUG){
+				alert(NYSI.util.sprintf(strTpl, jsonData));
+			}
+		},	
+
+		console:function(strTpl, jsonData){
+			if(DEBUG){
+				console.log(NYSI.util.sprintf(strTpl, jsonData));
+			}
+		}
+	};
+}();
+
+
 
 /**
  * Util package.
@@ -40,7 +70,24 @@ NYSI.util.sprintf = function(strTpl, jsonData){
 NYSI.util.isFuncExist = function(func){
 	return (typeof func === 'function');
 }
-	
+
+NYSI.util.getFuncName = function(func) {
+	return func.name ? func.name : "";
+}
+
+NYSI.util.timed = function(func, callback) {
+	var start = (new Date()).getTime(), result, diff;
+	result = func.apply(this, arguments);
+	diff = (new Date()).getTime() - start;
+	if (callback) {
+	  callback(diff);
+	} else {
+		NYSI.log.console("Function {{funcName}} finished in {{execTime}} millseconds", {'funcName': NYSI.util.getFuncName(func), 'execTime':diff});
+	}
+	return result;
+};
+
+
 NYSI.util.loadCDNLocal = function(jsonData){
 	if(!!jsonData){
 		Modernizr.load([
@@ -83,7 +130,6 @@ NYSI.util.loadAppRes = function(app, jsonData){
 	  nope: jsonData.legacy.resources,
 	  callback: function (url, result, key){
 	    if (url === jsonData.modern.resources[jsonData.modern.resources.length - 1]) {
-	      NYSI.log.console('using modern(HTML5)!');
 		    if(NYSI.util.isFuncExist(jsonData.modern.callback)){
 		    	jsonData.modern.callback();
 		    }
@@ -92,7 +138,6 @@ NYSI.util.loadAppRes = function(app, jsonData){
 		    }
 	    }
 	    else if (url === jsonData.legacy.resources[jsonData.legacy.resources.length - 1]){
-	      NYSI.log.console('using legacy(Polyfill)!');
 		    if(NYSI.util.isFuncExist(jsonData.legacy.callback)){
 		    	jsonData.legacy.callback();
 		    }
@@ -104,34 +149,7 @@ NYSI.util.loadAppRes = function(app, jsonData){
 	});
 };
 
-/**
- * Debug package.
- */
-NYSI.namespace("log");
 
-NYSI.log = function(){
-	// flag to turn on/off debugging
-	var DEBUG = true;  
-	
-	//disable debugging by overiding the default console function
-	if(!DEBUG && console){
-		console.log = function(){};
-	}
-	
-	return {
-		modal:function(strTpl, jsonData){
-			if(DEBUG){
-				alert(NYSI.util.sprintf(strTpl, jsonData));
-			}
-		},	
-
-		console:function(strTpl, jsonData){
-			if(DEBUG){
-				console.log(NYSI.util.sprintf(strTpl, jsonData));
-			}
-		}
-	};
-}();
 
 
 /**
@@ -156,19 +174,19 @@ NYSI.framework.app = function(){
 
 	that.startModern = function(){
 	  NYSI.log.console('init starts for modern(HTML5)!');
-		that.initModern();
+		NYSI.util.timed(that.initModern);
 	  NYSI.log.console('init completes for modern(HTML5)!');
 	}
 	
 	that.startLegacy = function(){
 	  NYSI.log.console('init starts for legacy(Polyfill)!');
-		that.initLegacy();
+		NYSI.util.timed(that.initLegacy);
 	  NYSI.log.console('init completes for legacy(Polyfill)!');
 	}
 	
 	that.start = function(){
 	  NYSI.log.console('init starts for app!');
-		that.init();
+		NYSI.util.timed(that.init);
 	  NYSI.log.console('init completes for app!');
 	}
 

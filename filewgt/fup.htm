@@ -14,7 +14,7 @@
 
 		var myApp = function(){
 			var that = NYSI.framework.app();
-			that.init = function(){
+			that.init = function init(){
 		  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
 
 				$(function(){
@@ -30,7 +30,7 @@
 				});
 			}
 			
-			that.initModern = function(){
+			that.initModern = function initModern(){
 				$('#html5-impl').show();
 				$('#flash-impl').hide();
 				var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
@@ -52,7 +52,7 @@
 				});
 			}
 			
-			that.initLegacy = function(){
+			that.initLegacy = function initLegacy(){
 				$('#flash-impl').show();
 				$('#html5-impl').hide();
 				NYSI.flash.filemgr.bootstrap();
