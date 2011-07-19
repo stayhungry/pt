@@ -12,62 +12,62 @@
 
 	<script type="text/javascript">
 
-		var initModern = function(){
-			$('#html5-impl').show();
-			$('#flash-impl').hide();
-			var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
-			$('#file-to-upload').bind({
-				change: function(e) {
-					nysiFileUpload.showFiles();
-					e.preventDefault();
-				}
-			});
-			$('#btn-select').bind({
-				click: function(e) {
-					$('#file-to-upload').click();
-				}
-			});
-			$('#btn-upload').bind({
-				click: function(e) {
-					nysiFileUpload.uploadFiles();
-				}
-			});
-		}
-	
-		var initLegacy = function(){
-			$('#flash-impl').show();
-			$('#html5-impl').hide();
-			NYSI.flash.filemgr.bootstrap();
-			$('#btn_upload').bind({
-				click: function(e) {
-					$('#file_upload').uploadifyUpload();
-				}
-			});
-		}
+		var myApp = function(){
+			var that = NYSI.framework.app();
+			that.init = function(){
+		  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
 
-		var initApp = function(){
-	  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
+				$(function(){
+					NYSI.util.loadAppRes(that, {
+						'test': 	!!window.FileReader && Modernizr.draganddrop, 
+						'modern': {
+							resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js']
+						},
+						'legacy' : {
+							resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js']
+						}
+					});
+				});
+			}
 			
-			$(function(){
-				NYSI.util.loadAppRes({
-					'test': 	!!window.FileReader && Modernizr.draganddrop, 
-					'modern': {
-						resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js'],
-						callback: initModern
-					},
-					'legacy' : {
-						resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js'],
-						callback: initLegacy
+			that.initModern = function(){
+				$('#html5-impl').show();
+				$('#flash-impl').hide();
+				var nysiFileUpload = NYSI.html5.filemgr.bootstrap();	
+				$('#file-to-upload').bind({
+					change: function(e) {
+						nysiFileUpload.showFiles();
+						e.preventDefault();
 					}
 				});
-			});
-		}
-	
-		NYSI.util.loadCDNLocal({
-			'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
-			'localUrl': 'fup/jquery-1.6.2.min.js',
-			'callback': initApp
-		});
+				$('#btn-select').bind({
+					click: function(e) {
+						$('#file-to-upload').click();
+					}
+				});
+				$('#btn-upload').bind({
+					click: function(e) {
+						nysiFileUpload.uploadFiles();
+					}
+				});
+			}
+			
+			that.initLegacy = function(){
+				$('#flash-impl').show();
+				$('#html5-impl').hide();
+				NYSI.flash.filemgr.bootstrap();
+				$('#btn_upload').bind({
+					click: function(e) {
+						$('#file_upload').uploadifyUpload();
+					}
+				});
+			}
+
+			return that;
+
+		}()
+		
+		NYSI.framework.jQueryBootStrap(myApp);
 	</script>
 
 </head>

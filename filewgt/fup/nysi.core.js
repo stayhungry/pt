@@ -76,7 +76,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 	}
 };
 
-NYSI.util.loadAppRes = function(jsonData){
+NYSI.util.loadAppRes = function(app, jsonData){
 	Modernizr.load({
 	  test: jsonData.test,
 	  yep: jsonData.modern.resources,
@@ -87,11 +87,17 @@ NYSI.util.loadAppRes = function(jsonData){
 		    if(NYSI.util.isFuncExist(jsonData.modern.callback)){
 		    	jsonData.modern.callback();
 		    }
+		    else{
+		    	app.startModern();
+		    }
 	    }
 	    else if (url === jsonData.legacy.resources[jsonData.legacy.resources.length - 1]){
 	      NYSI.log.console('using legacy(Polyfill)!');
 		    if(NYSI.util.isFuncExist(jsonData.legacy.callback)){
 		    	jsonData.legacy.callback();
+		    }
+		    else{
+		    	app.startLegacy();
 		    }
 	    }
 	  }
@@ -128,3 +134,43 @@ NYSI.log = function(){
 }();
 
 
+/**
+ * Framework package.
+ */
+NYSI.namespace("framework");
+
+NYSI.framework.jQueryBootStrap = function(app){
+	NYSI.util.loadCDNLocal({
+		'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
+		'localUrl': 'fup/jquery-1.6.2.min.js',
+		'callback': app.start
+	});
+}
+
+NYSI.framework.app = function(){
+	var that = {};
+
+	that.initModern = function(){};
+	that.initLegacy = function(){};
+	that.init = function(){};
+
+	that.startModern = function(){
+	  NYSI.log.console('init starts for modern(HTML5)!');
+		that.initModern();
+	  NYSI.log.console('init completes for modern(HTML5)!');
+	}
+	
+	that.startLegacy = function(){
+	  NYSI.log.console('init starts for legacy(Polyfill)!');
+		that.initLegacy();
+	  NYSI.log.console('init completes for legacy(Polyfill)!');
+	}
+	
+	that.start = function(){
+	  NYSI.log.console('init starts for app!');
+		that.init();
+	  NYSI.log.console('init completes for app!');
+	}
+
+	return that;
+}
