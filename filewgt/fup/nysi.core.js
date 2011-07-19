@@ -67,22 +67,22 @@ NYSI.util.sprintf = function(strTpl, jsonData){
 	}
 };
 
-NYSI.util.isFuncExist = function(func){
-	return (typeof func === 'function');
+NYSI.util.isFnExist = function(fn){
+	return (typeof fn === 'function');
 }
 
-NYSI.util.getFuncName = function(func) {
-	return func.name ? func.name : "";
+NYSI.util.getFnName = function(fn) {
+	return fn.name ? fn.name : "";
 }
 
-NYSI.util.timed = function(func, callback) {
+NYSI.util.timed = function(fn, callback) {
 	var start = (new Date()).getTime(), result, diff;
-	result = func.apply(this, arguments);
+	result = fn.apply(this, arguments);
 	diff = (new Date()).getTime() - start;
-	if (callback) {
+	if (NYSI.util.isFnExist(callback)) {
 	  callback(diff);
 	} else {
-		NYSI.log.console("Function {{funcName}} finished in {{execTime}} millseconds", {'funcName': NYSI.util.getFuncName(func), 'execTime':diff});
+		NYSI.log.console("Function {{funcName}} finished in {{execTime}} millseconds", {'funcName': NYSI.util.getFnName(fn), 'execTime':diff});
 	}
 	return result;
 };
@@ -96,7 +96,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 			  callback: function(url, result, key){
 			    if (window.jQuery) {
 				    NYSI.log.console('loading from Google API succeeded,  app starts. ');
-				    if(NYSI.util.isFuncExist(jsonData.callback)){
+				    if(NYSI.util.isFnExist(jsonData.callback)){
 				    	jsonData.callback();
 				    }
 			    }
@@ -107,7 +107,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 						  callback: function(url, result, key){
 						    if (window.jQuery) {
 							    NYSI.log.console('loading from our server succeeded,  app starts. ');
-							    if(NYSI.util.isFuncExist(jsonData.callback)){
+							    if(NYSI.util.isFnExist(jsonData.callback)){
 							    	jsonData.callback();
 							    }
 						    }
@@ -130,7 +130,7 @@ NYSI.util.loadAppRes = function(app, jsonData){
 	  nope: jsonData.legacy.resources,
 	  callback: function (url, result, key){
 	    if (url === jsonData.modern.resources[jsonData.modern.resources.length - 1]) {
-		    if(NYSI.util.isFuncExist(jsonData.modern.callback)){
+		    if(NYSI.util.isFnExist(jsonData.modern.callback)){
 		    	jsonData.modern.callback();
 		    }
 		    else{
@@ -138,7 +138,7 @@ NYSI.util.loadAppRes = function(app, jsonData){
 		    }
 	    }
 	    else if (url === jsonData.legacy.resources[jsonData.legacy.resources.length - 1]){
-		    if(NYSI.util.isFuncExist(jsonData.legacy.callback)){
+		    if(NYSI.util.isFnExist(jsonData.legacy.callback)){
 		    	jsonData.legacy.callback();
 		    }
 		    else{
