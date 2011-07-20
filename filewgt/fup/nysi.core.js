@@ -95,13 +95,13 @@ NYSI.util.loadCDNLocal = function(jsonData){
 			  load: jsonData.cdnUrl,
 			  callback: function(url, result, key){
 			    if (eval(jsonData.test)) {
-				    NYSI.log.console('loading from Google API succeeded,  app starts. ');
+				    NYSI.log.console('loading from CDN succeeded,  app starts. ');
 				    if(NYSI.util.isFnExist(jsonData.callback)){
 				    	jsonData.callback();
 				    }
 			    }
 			    else{
-			    	NYSI.log.console('loading from Google API failed,  loading from our server instead');
+			    	NYSI.log.console('loading from CDN failed,  loading from our server instead');
 			      Modernizr.load({
 			      	load: jsonData.localUrl,
 						  callback: function(url, result, key){
@@ -112,7 +112,7 @@ NYSI.util.loadCDNLocal = function(jsonData){
 							    }
 						    }
 						    else{
-							    alert('Please refresh the page. ');
+							    NYSI.log.modal('Please refresh the page. ');
 						    }
 						  }
 						})

@@ -47,4 +47,44 @@ test("NYSI.util.timed", function() {
   ); 	
 
 }); 
+
+module("CDN loading Test");  
+yepnope.errorTimeout = 500; 
+
+test("NYSI.util.loadCDNLocal", function() {
+	stop(1000);
+	expect(1);
+	
+	NYSI.util.loadCDNLocal({
+		'cdnUrl': 'http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js', 
+		'localUrl': 'blah',
+		'test': 'window.jQuery',
+		'callback': function(){
+			ok(window.jQuery, "jQuery has loaded from CDN");
+			start();
+		}
+	});
+
+});
+
+test("NYSI.util.loadCDNLocal", function() {
+	stop(1000);
+	expect(1);
+
+	NYSI.util.loadCDNLocal({
+		'cdnUrl': 'blah', 
+		'localUrl': '../fup/jquery-1.6.2.min.js',
+		'test': 'window.jQuery',
+		'callback': function(){
+			ok(window.jQuery, "jQuery has loaded from local");
+			start();
+		}
+	});
+
+});
+
+
+
+
+
 });  
