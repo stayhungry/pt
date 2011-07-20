@@ -68,7 +68,7 @@ NYSI.util.sprintf = function(strTpl, jsonData){
 };
 
 NYSI.util.isFnExist = function(fn){
-	return (typeof fn === 'function');
+	return fn && (typeof fn === 'function');
 }
 
 NYSI.util.getFnName = function(fn) {

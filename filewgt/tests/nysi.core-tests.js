@@ -1,5 +1,6 @@
 $(function(){  
 
+
 module("Utils Test");  
 
 test("NYSI.util.sprintf", function() {  
@@ -15,6 +16,16 @@ test("NYSI.util.sprintf", function() {
   ); 	
 
 });  
+
+test("NYSI.util.isFnExist", function() {  
+	var fn1;
+  var fn2= function (){};
+  //ok(!NYSI.util.isFnExist(fn0));
+  ok(!NYSI.util.isFnExist(fn1));
+  ok(NYSI.util.isFnExist(fn2));
+
+});  
+
 
 test("NYSI.util.getFnName", function() {  
 
@@ -47,6 +58,9 @@ test("NYSI.util.timed", function() {
   ); 	
 
 }); 
+
+
+
 
 module("CDN loading Test");  
 yepnope.errorTimeout = 500; 
