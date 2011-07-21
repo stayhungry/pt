@@ -2,7 +2,7 @@
 .hidden {display: none;}
 
 
-div.panel1 { 
+div.panel { 
 	width: 400px;
 	min-height:200px;
 	height: expression( this.scrollHeight < 200 ? "200px" : "auto" );

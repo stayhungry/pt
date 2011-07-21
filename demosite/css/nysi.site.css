@@ -145,7 +145,7 @@ ul.sub-nav li {
 }
 
 /* content area */
-.margin-room {
+.main-content .margin-room {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -164,7 +164,18 @@ ul.sub-nav li {
 	font-size: 14px;
 }
 
-div.panel { 
+.main-content span.title {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+
+div.text-center { 
+	text-align:center
+}
+
+div.side-content { 
 	width: 200px;
 	min-height:200px;
 	height: expression( this.scrollHeight < 200 ? "200px" : "auto" );
@@ -175,7 +186,25 @@ div.panel {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F4F4F4',GradientType=0 );
 	-webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.15);
 	-moz-box-shadow: 0px 2px 5px rgba(0,0,0,0.25);
-	margin: 0 0 20px 0;
+	margin: 30px 0 20px 0;
+}
+
+.side-content .margin-room {
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+
+.side-content span.title {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.main-content span.desc {
+	font-size: 12px;
+}
+
+.side-content span.action {
+	font-size: 18px;
 }
 
 
