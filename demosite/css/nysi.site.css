@@ -73,6 +73,9 @@ ul.nav li:hover {
 	background-color: #ccc;
 }
 
+ul, ol {
+    margin-bottom: 18px;
+}
 
 /* reveal area */
 
@@ -151,7 +154,7 @@ ul.sub-nav li {
 	background-color: #f5f5f5;
 	background-position: top center;
 	background-repeat: no-repeat;
-	margin-top: 120px;
+	margin-top: 40px;
 }
 
 div.footer-block {
