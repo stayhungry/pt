@@ -74,7 +74,7 @@ ul.nav li:hover {
 }
 
 ul, ol {
-    margin-bottom: 18px;
+    margin-bottom: 5px;
 }
 
 /* reveal area */
@@ -118,7 +118,6 @@ ul, ol {
 /* nav area */
 
 .nav-bar {
-	height: 35px;
 	background-color: #eee;
 }
 
