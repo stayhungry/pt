@@ -40,6 +40,7 @@ NYSI.html5.filemgr.bootstrap = function(){
   function uploadComplete(evt, id) {
     var progressBar = $('#progress-bar-' + id);
 		progressBar.css('width', "100%");
+    NYSI.log.console("file[{{id}}] upload complete with {{pct}}%.", {'id': id, 'pct': '100'});	
     var uploadResponse = $('#upload-response-' + id);
     uploadResponse.html(evt.target.responseText);
   }  
