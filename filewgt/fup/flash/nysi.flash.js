@@ -11,6 +11,7 @@ NYSI.flash.filemgr.bootstrap = function(){
     'script'    : pathToUpload,
     'cancelImg' : 'fup/flash/cancel.png',
     'folder'    : '../upfiles',
+    'buttonText': 'UPLOAD FILES',
     'auto'      : false,
     'multi'     : true,
     'removeCompleted' : false,

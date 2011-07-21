@@ -74,7 +74,7 @@ ul.nav li:hover {
 }
 
 ul, ol {
-    margin-bottom: 5px;
+    margin-bottom: 1px;
 }
 
 /* reveal area */
@@ -122,7 +122,7 @@ ul, ol {
 }
 
 ul.sub-nav {
-	font-size: 15px;
+	font-size: 14px;
 	margin-top: 3px;
 	overflow: hidden;
 }
@@ -139,7 +139,6 @@ ul.sub-nav a:hover
 ul.sub-nav li {
 	display: block;
 	float: left;
-	font-weight: bold;
 	margin-right: 10px;
 	padding: 5px 30px 0 0;
 }
@@ -211,7 +210,7 @@ div.side-content {
 /* footer area */
 
 .footer {
-	font-size: 15px;
+	font-size: 13px;
 	background-color: #f5f5f5;
 	background-position: top center;
 	background-repeat: no-repeat;
@@ -219,7 +218,6 @@ div.side-content {
 }
 
 div.footer-block {
-	font-size: 14px;
 	font-weight: bold;
 	margin-top: 10px;
 }
