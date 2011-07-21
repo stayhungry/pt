@@ -36,6 +36,7 @@
 				$('#file-to-upload').bind({
 					change: function(e) {
 						nysiFileUpload.showFiles();
+						$('#btn-upload').show();
 						e.preventDefault();
 					}
 				});
@@ -95,14 +96,14 @@
 		    <input type="button" id="btn-select" value="SELECT FILES" />
 		</form>
 		<div id="file-list"></div>
-	  <input type="button" id="btn-upload" value="Upload" />
+	  <input type="button" id="btn-upload" value="Upload" class="hidden"/>
 	</div>
 	
 	<!-- flash structure -->
 	<!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
 	<div id="flash-impl" class="panel hidden"> 
 		<input type="file" id="file_upload" />
-		<input type="button" id="btn_upload" value="Upload" />
+		<input type="button" id="btn_upload" value="Upload" class="hidden" />
 	</div>
 
 </div>
