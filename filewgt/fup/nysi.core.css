@@ -5,6 +5,7 @@
 div.panel { 
 	width: 400px;
 	min-height:200px;
+	height: expression( this.scrollHeight < 200 ? "200px" : "auto" );
 	padding: 20px 20px 2px 20px;
 	background: #efefef;
 	background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%); 
