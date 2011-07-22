@@ -7,49 +7,9 @@
  *   NYSI.enterprise.showBranding = function(){..};
  */
 
-var NYSI = NYSI || {};
-NYSI.namespace = function() {
-	var a = arguments, o = null, i, j, d;
-	var l = a.length;
-	for(i = 0; i < l; i++) {
-		d = ('' + a[i]).split('.');
-		o = NYSI;
-		for(j = (d[0] == 'NYSI') ? 1 : 0; j < d.length; j++) {
-			o[d[j]] = o[d[j]] || {};
-			o = o[d[j]];
-		}
-	}
-	return o;
-};
 
-/**
- * Debug package.
- */
-NYSI.namespace("log");
+NYSI.namespace("core");
 
-NYSI.log = function(){
-	// flag to turn on/off debugging
-	var DEBUG = true;  
-	
-	//disable debugging by overiding the default console function
-	if(!DEBUG && console){
-		console.log = function(){};
-	}
-	
-	return {
-		modal:function(strTpl, jsonData){
-			if(DEBUG){
-				alert(NYSI.util.sprintf(strTpl, jsonData));
-			}
-		},	
-
-		console:function(strTpl, jsonData){
-			if(DEBUG){
-				console.log(NYSI.util.sprintf(strTpl, jsonData));
-			}
-		}
-	};
-}();
 
 
 
@@ -87,6 +47,16 @@ NYSI.util.timed = function(fn, callback) {
 	return result;
 };
 
+
+NYSI.util.loadDependencies = function(callback){
+	Modernizr.load({
+	  test: window.jQuery,
+	  nope: ['fup/jquery-1.6.2.min.js'],
+	  complete : function (){
+	  	callback();
+	  }
+	});
+}
 
 NYSI.util.loadCDNLocal = function(jsonData){
 	if(!!jsonData){

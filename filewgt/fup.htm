@@ -1,32 +1,61 @@
+<!-- hard dependencies -->
+<script type="text/javascript" src="fup/modernizr.custom.js"></script>
+<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
+<script type="text/javascript" src="fup/nysi.conf.js"></script>
+<script type="text/javascript" src="fup/nysi.base.js"></script>
 <div>
 
-	<!-- dependencies -->
-	<script type="text/javascript" src="fup/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
-	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
-
-	<script type="text/javascript" src="fup/nysi.core.js"></script>
-	<script type="text/javascript" src="fup/nysi.conf.js"></script>
 	<link type="text/css" rel="stylesheet" href="fup/nysi.core.css" />
+
+	<!-- html5 structure -->
+	<div id="html5-impl" class="hidden"> 
+		<form id="fup-form">
+		    <input type="file" id="file-to-upload" class="hidden" multiple/>
+		    <input type="button" id="btn-select" value="UPLOAD FILES" />
+		</form>
+		<div id="file-list"></div>
+	  <input type="button" id="btn-upload" value="Upload" class="hidden"/>
+	  <input type="button" id="btn-reset" value="Reset" class="hidden"/>
+	</div>
+	
+	<!-- flash structure -->
+	<!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
+	<div id="flash-impl" class="hidden"> 
+		<input type="file" id="file_upload" />
+		<input type="button" id="btn_upload" value="Upload" class="hidden" />
+	  <input type="button" id="btn_reset" value="Reset" class="hidden"/>
+	</div>
+
 
 	<!-- main logic -->
 	<script type="text/javascript">
+    var dependencies = {
+      js:
+	      [
+          {
+              'test': window.jQuery,
+              'path': 'fup/jquery-1.6.2.min.js'
+					},
+          {
+              'test': window.NYSI.core,
+              'path': 'fup/nysi.core.js'
+					}
+				]
+    };
 
 		var myApp = function(){
 			var that = NYSI.framework.app();
 			that.init = function init(){
 		  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
 
-				$(function(){
-					NYSI.util.loadAppRes(that, {
-						'test': 	!!window.FileReader && Modernizr.draganddrop, 
-						'modern': {
-							resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js']
-						},
-						'legacy' : {
-							resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js']
-						}
-					});
+				NYSI.util.loadAppRes(that, {
+					'test': 	!!window.FileReader && Modernizr.draganddrop, 
+					'modern': {
+						resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js']
+					},
+					'legacy' : {
+						resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js']
+					}
 				});
 			}
 			
@@ -79,7 +108,8 @@
 
 		}()
 		
-		myApp.start();
+		NYSI.base.bootstrap(dependencies, myApp.start);
+		//NYSI.util.loadDependencies(myApp.start);		
 		//NYSI.framework.jQueryBootStrap(myApp);
 	</script>
 
@@ -100,25 +130,5 @@
 	  </ul>
 	
 	</script>
-	
-
-	<!-- html5 structure -->
-	<div id="html5-impl" class="hidden"> 
-		<form id="fup-form">
-		    <input type="file" id="file-to-upload" class="hidden" multiple/>
-		    <input type="button" id="btn-select" value="UPLOAD FILES" />
-		</form>
-		<div id="file-list"></div>
-	  <input type="button" id="btn-upload" value="Upload" class="hidden"/>
-	  <input type="button" id="btn-reset" value="Reset" class="hidden"/>
-	</div>
-	
-	<!-- flash structure -->
-	<!-- 3 musts:  client-side:  id="file_upload" and "fileName" can't be used as selector id;  server-side: $file_id='Filedata' -->
-	<div id="flash-impl" class="hidden"> 
-		<input type="file" id="file_upload" />
-		<input type="button" id="btn_upload" value="Upload" class="hidden" />
-	  <input type="button" id="btn_reset" value="Reset" class="hidden"/>
-	</div>
 
 </div>
