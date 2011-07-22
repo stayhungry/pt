@@ -16,8 +16,17 @@ NYSI.flash.filemgr.bootstrap = function(){
     'multi'     : true,
     'removeCompleted' : false,
     'scriptAccess' : 'always',
-    'onSelect': function(){$('#btn_upload').show();}
+    'onSelect': function(){
+    	$('#btn_upload').show(); 
+    	$('#btn_reset').show();
+    }
   });
 };
 	
 
+NYSI.flash.filemgr.reset = function(){
+	$('#file_upload').uploadifyClearQueue();
+	$('#btn_upload').hide(); 
+	$('#btn_reset').hide();
+};
+	

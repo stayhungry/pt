@@ -106,3 +106,10 @@ NYSI.html5.filemgr.bootstrap = function(){
 		}
 	};		
 };
+
+NYSI.html5.filemgr.reset = function(){
+	$('#file-list').empty(); 
+	$('#btn-upload').hide(); 
+	$('#btn-reset').hide();
+};
+	

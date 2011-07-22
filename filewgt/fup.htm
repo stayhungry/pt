@@ -37,6 +37,7 @@
 					change: function(e) {
 						nysiFileUpload.showFiles();
 						$('#btn-upload').show();
+						$('#btn-reset').show();
 						e.preventDefault();
 					}
 				});
@@ -50,6 +51,11 @@
 						nysiFileUpload.uploadFiles();
 					}
 				});
+				$('#btn-reset').bind({
+					click: function(e) {
+						NYSI.html5.filemgr.reset();
+					}
+				});
 			}
 			
 			that.initLegacy = function initLegacy(){
@@ -59,6 +65,11 @@
 				$('#btn_upload').bind({
 					click: function(e) {
 						$('#file_upload').uploadifyUpload();
+					}
+				});
+				$('#btn_reset').bind({
+					click: function(e) {
+						NYSI.flash.filemgr.reset();
 					}
 				});
 			}
@@ -97,6 +108,7 @@
 		</form>
 		<div id="file-list"></div>
 	  <input type="button" id="btn-upload" value="Upload" class="hidden"/>
+	  <input type="button" id="btn-reset" value="Reset" class="hidden"/>
 	</div>
 	
 	<!-- flash structure -->
@@ -104,6 +116,7 @@
 	<div id="flash-impl" class="hidden"> 
 		<input type="file" id="file_upload" />
 		<input type="button" id="btn_upload" value="Upload" class="hidden" />
+	  <input type="button" id="btn_reset" value="Reset" class="hidden"/>
 	</div>
 
 </div>
