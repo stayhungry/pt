@@ -56,7 +56,7 @@ NYSI.log = function(){
 		},	
 
 		console:function(strTpl, jsonData){
-			if(DEBUG){
+			if(DEBUG && console){
 				console.log(sprintf(strTpl, jsonData));
 			}
 		}

@@ -7,6 +7,8 @@ NYSI.namespace("html5.filemgr");
 
 NYSI.html5.filemgr.bootstrap = function(){
 
+	var filesToUpload = [];
+	
   function uploadFile(file, id) {
 
     /* upload file along with arbitary data that is not in the form */
@@ -40,7 +42,8 @@ NYSI.html5.filemgr.bootstrap = function(){
   function uploadComplete(evt, id) {
     var progressBar = $('#progress-bar-' + id);
 		progressBar.css('width', "100%");
-    NYSI.log.console("file[{{id}}] upload complete with {{pct}}%.", {"id": id, "pct": "100"});	
+    NYSI.log.console("file[{{id}}] upload complete with {{pct}}%.", {"id": id, "pct": "100"});
+    filesToUpload[id].uploaded = true;
     var uploadResponse = $('#upload-response-' + id);
     uploadResponse.html(evt.target.responseText);
   }  
@@ -75,41 +78,47 @@ NYSI.html5.filemgr.bootstrap = function(){
 
 
 	return {
+		reset: function(){
+			filesToUpload.length = 0;	
+			$('#file-list').empty(); 
+			$('#btn-upload').hide(); 
+			$('#btn-reset').hide();
+		},
 
 		showFiles: function(){
 			var files = $('#file-to-upload')[0].files;
 			if (typeof files !== "undefined") {
-				var filestoShow = [];
+				var filesToShow = [];
+				var base = filesToUpload.length;
 				for (var i=0, l=files.length; i<l; i++) {
-					var fileInfo = {"fileId": i, "fileName": files[i].name, "fileSize": humanlizeFileSize(files[i].size), "fileType": files[i].type};
-					filestoShow.push(fileInfo);
+					var fileInfo = {
+						"fileId": base + i, 
+						"fileName": files[i].name, 
+						"fileSize": humanlizeFileSize(files[i].size), 
+						"fileType": files[i].type, 
+						"file": files[i], 
+						"uploaded": false
+					};
+					filesToShow.push(fileInfo);
+					filesToUpload.push(fileInfo);
 				}
-				var data= {"files": filestoShow};
+				var data= {"files": filesToShow};
 				var html=Mustache.to_html($('#tpl-file-list').html(), data);
 				$(html).appendTo('#file-list');
-			}
-			else {
+			} else {
 				$('#file-list').html("No support for the File API in this web browser");
 			}	
 		},
 
 		uploadFiles: function(){
-			var files = $('#file-to-upload')[0].files;
-			if (typeof files !== "undefined") {
-				for (var i=0, l=files.length; i<l; i++) {
-					uploadFile(files[i], i);
+			for (var i=0, l=filesToUpload.length; i<l; i++) {
+				var fileInfo = filesToUpload[i]
+				if(!fileInfo.uploaded){
+					uploadFile(fileInfo.file, fileInfo.fileId);
 				}
 			}
-			else {
-				$('#fup-info').html("No support for the File API in this web browser");
-			}	
 		}
 	};		
 };
 
-NYSI.html5.filemgr.reset = function(){
-	$('#file-list').empty(); 
-	$('#btn-upload').hide(); 
-	$('#btn-reset').hide();
-};
 	
