@@ -1,9 +1,9 @@
-<!-- hard dependencies -->
-<script type="text/javascript" src="fup/modernizr.custom.js"></script>
-<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
-<script type="text/javascript" src="fup/nysi.conf.js"></script>
-<script type="text/javascript" src="fup/nysi.base.js"></script>
 <div>
+	<!-- hard dependencies -->
+	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
+	<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
+	<script type="text/javascript" src="fup/nysi.conf.js"></script>
+	<script type="text/javascript" src="fup/nysi.base.js"></script>
 
 	<link type="text/css" rel="stylesheet" href="fup/nysi.core.css" />
 
@@ -43,10 +43,9 @@
     };
 
 		var myApp = function(){
-			var that = NYSI.framework.app();
+			var that = NYSI.framework.createApp();
 			that.init = function init(){
 		  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
-
 				NYSI.util.loadAppRes(that, {
 					'test': 	!!window.FileReader && Modernizr.draganddrop, 
 					'modern': {
@@ -107,9 +106,9 @@
 
 		}()
 		
-		NYSI.base.bootstrap(dependencies, myApp.start);
+		NYSI.framework.bootstrap(dependencies, myApp);
 		//NYSI.util.loadDependencies(myApp.start);		
-		//NYSI.framework.jQueryBootStrap(myApp);
+		//NYSI.util.jQueryBootStrap(myApp);
 	</script>
 
 	<!-- mustache templates -->

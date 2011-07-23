@@ -22,14 +22,16 @@ NYSI.namespace = function() {
 	return o;
 };
 
+
 /**
- * Debug package.
+ * log package.
  */
 NYSI.namespace("log");
 
 NYSI.log = function(){
 	// flag to turn on/off debugging
 	var DEBUG = true;  
+	var LEVEL = "DEBUG";
 	
 	//disable debugging by overiding the default console function
 	if(!DEBUG && console){
@@ -37,11 +39,12 @@ NYSI.log = function(){
 	}
 
 	function sprintf(strTpl, jsonData){
+		var outTpl = LEVEL + ": " + strTpl;
 		if(!!jsonData){
-			return Mustache.to_html(strTpl, jsonData);
+			return Mustache.to_html(outTpl, jsonData);
 		}
 		else{
-			return strTpl;
+			return outTpl;
 		}
 	};
 
@@ -62,11 +65,11 @@ NYSI.log = function(){
 
 
 /**
- * base package.
+ * debug package.
  */
-NYSI.namespace("base");
+NYSI.namespace("debug");
 
-NYSI.base.timed = function(fn, callback) {
+NYSI.debug.timed = function(fn, callback) {
 	var start = (new Date()).getTime(), result, diff;
 	result = fn.apply(this, arguments);
 	diff = (new Date()).getTime() - start;
@@ -78,31 +81,13 @@ NYSI.base.timed = function(fn, callback) {
 	return result;
 };
 
-NYSI.base.bootstrap = function(dependencies, callback){
-	var resources=[];
-	var jsDependencies = dependencies.js;
-	for (var i=0, l=jsDependencies.length; i<l; i++) {
-		if(!jsDependencies[i].test){
-			resources.push(jsDependencies[i].path);
-		}
-	}
-	if(resources.length > 1){
-		Modernizr.load({
-		  load: resources,
-		  complete : function (){
-		  	callback();
-		  }
-		});
-	}
-}
-
 
 /**
- * Framework package.
+ * framework package.
  */
 NYSI.namespace("framework");
 
-NYSI.framework.app = function(){
+NYSI.framework.createApp = function(){
 	var that = {};
 
 	that.initModern = function(){};
@@ -111,24 +96,62 @@ NYSI.framework.app = function(){
 
 	that.startModern = function(){
 	  NYSI.log.console('init starts for modern(HTML5)!');
-		NYSI.base.timed(that.initModern);
+		NYSI.debug.timed(that.initModern);
 	  NYSI.log.console('init completes for modern(HTML5)!');
 	}
 	
 	that.startLegacy = function(){
 	  NYSI.log.console('init starts for legacy(Polyfill)!');
-		NYSI.base.timed(that.initLegacy);
+		NYSI.debug.timed(that.initLegacy);
 	  NYSI.log.console('init completes for legacy(Polyfill)!');
 	}
 	
 	that.start = function(){
 	  NYSI.log.console('init starts for app!');
-		NYSI.base.timed(that.init);
+		NYSI.debug.timed(that.init);
 	  NYSI.log.console('init completes for app!');
 	}
 
 	return that;
 }
+
+NYSI.framework.bootstrap = function(dependencies, app){
+  NYSI.log.console('calculating dependencies ...');
+	var resources=[];
+	var jsDependencies = dependencies.js;
+	for (var i=0, l=jsDependencies.length; i<l; i++) {
+		var loaded = jsDependencies[i].test;
+		var resource = jsDependencies[i].path;
+		if(!loaded){
+			resources.push(resource);
+			NYSI.log.console('Dependency is queued for {{resource}}', {'resource': resource});
+		}
+		else{
+			NYSI.log.console('Dependency already loaded for {{resource}}', {'resource': resource});
+		}
+	}
+	var numOfResources = resources.length;
+	NYSI.log.console('Total dependencies to load: {{count}}', {'count': numOfResources});
+	if(numOfResources > 0){
+		Modernizr.load({
+		  load: resources,
+		  complete : function (){
+				NYSI.log.console('All dependencies are loaded and app starts.');
+		  	app.start();
+		  }
+		});
+	}
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
