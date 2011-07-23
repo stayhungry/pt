@@ -17,15 +17,16 @@
 
 	<script type="text/javascript">
 	
-	$(function(){
-		$.ajax({
-		  url: 'http://localhost/pt/filewgt/fup.htm',
-		  dataType: 'html',
-		  success: function(data) {
-		    $('#fileupload-wgt').html(data);
-		  }
+		$(function(){
+			$.ajax({
+			  url: 'http://localhost/pt/filewgt/fup.htm',
+			  dataType: 'html',
+			  success: function(data) {
+			    //$('#fileupload-wgt').html("hello");
+			    $('#fileupload-wgt').html(data);
+			  }
+			});
 		});
-	});
 	</script>
 
 </head>
@@ -85,7 +86,7 @@
 			</div>
 			<div id="fileupload-wgt">
 				<!-- 
-					iframe height="300px" width="100%" scrolling="no" frameborder="0" src="http://localhost/pt/filewgt/fup.htm"></iframe>
+					<iframe height="300px" width="100%" scrolling="no" frameborder="0" src="http://localhost/pt/filewgt/fup.htm"></iframe>
 				-->
 			</div>
 		</div>

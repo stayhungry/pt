@@ -1,11 +1,11 @@
 <div>
 	<!-- hard dependencies -->
-	<script type="text/javascript" src="fup/modernizr.custom.js"></script>
-	<script type="text/javascript" src="fup/mustache-0.3.0.js"></script>
-	<script type="text/javascript" src="fup/nysi.conf.js"></script>
-	<script type="text/javascript" src="fup/nysi.base.js"></script>
+	<script type="text/javascript" src="/pt/filewgt/fup/modernizr.custom.js"></script>
+	<script type="text/javascript" src="/pt/filewgt/fup/mustache-0.3.0.js"></script>
+	<script type="text/javascript" src="/pt/filewgt/fup/nysi.conf.js"></script>
+	<script type="text/javascript" src="/pt/filewgt/fup/nysi.base.js"></script>
 
-	<link type="text/css" rel="stylesheet" href="fup/nysi.core.css" />
+	<link type="text/css" rel="stylesheet" href="/pt/filewgt/fup/nysi.core.css" />
 
 	<!-- html5 structure -->
 	<div id="html5-impl" class="hidden"> 
@@ -33,11 +33,11 @@
 	      [
           {
               "test": window.jQuery,
-              "path": "fup/jquery-1.6.2.min.js"
+              "path": "/pt/filewgt/fup/jquery-1.6.2.min.js"
 					},
           {
               "test": window.NYSI.util,
-              "path": "fup/nysi.util.js"
+              "path": "/pt/filewgt/fup/nysi.util.js"
 					}
 				]
     };
@@ -49,10 +49,10 @@
 				NYSI.util.loadAppRes(that, {
 					"test": 	!!window.FileReader && Modernizr.draganddrop, 
 					"modern": {
-						"resources": ["fup/html5/nysi.html5.css", "fup/html5/nysi.html5.js"]
+						"resources": ["/pt/filewgt/fup/html5/nysi.html5.css", "/pt/filewgt/fup/html5/nysi.html5.js"]
 					},
 					"legacy" : {
-						"resources": ["fup/flash/swfobject.js", "fup/flash/jquery.uploadify.v2.1.4.min.js", "fup/flash/uploadify.css", "fup/flash/nysi.flash.js"]
+						"resources": ["/pt/filewgt/fup/flash/swfobject.js", "/pt/filewgt/fup/flash/jquery.uploadify.v2.1.4.min.js", "/pt/filewgt/fup/flash/uploadify.css", "/pt/filewgt/fup/flash/nysi.flash.js"]
 					}
 				});
 			}

@@ -132,6 +132,7 @@ NYSI.framework.bootstrap = function(dependencies, app){
 	var numOfResources = resources.length;
 	NYSI.log.console('Total dependencies to load: {{count}}', {"count": numOfResources});
 	if(numOfResources > 0){
+	NYSI.log.console('loading');
 		Modernizr.load({
 		  load: resources,
 		  complete : function (){
