@@ -7,9 +7,9 @@ NYSI.namespace("flash.filemgr");
 
 NYSI.flash.filemgr.bootstrap = function(){
   $('#file_upload').uploadify({
-    'uploader'  : 'fup/flash/uploadify.swf',
+    'uploader'  : '/pt/filewgt/fup/flash/uploadify.swf',
     'script'    : pathToUpload,
-    'cancelImg' : 'fup/flash/cancel.png',
+    'cancelImg' : '/pt/filewgt/fup/flash/cancel.png',
     'folder'    : '../upfiles',
     'buttonText': 'UPLOAD FILES',
     'auto'      : false,
