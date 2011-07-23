@@ -12,7 +12,22 @@
 	<link href="css/reveal.css" media="screen" rel="stylesheet" type="text/css" />
 	<link href="css/nysi.site.css" media="screen" rel="stylesheet" type="text/css" />
 	
+	<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 	<script src="js/foundation.all.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+	
+	$(function(){
+		$.ajax({
+		  url: 'http://localhost/pt/filewgt/fup.htm',
+		  dataType: 'html',
+		  success: function(data) {
+		    $('#fileupload-wgt').html(data);
+		  }
+		});
+	});
+	</script>
+
 </head>
 
 <body>
@@ -68,8 +83,10 @@
 			<div class="margin-room">
 				<span class="desc">A new version of YouSendIt is here. You can still send files and folders for free up to 2GB. But now we can help you to do much more.</span>
 			</div>
-			<div>
-				<iframe height="300px" width="100%" scrolling="no" frameborder="0" src="http://localhost/pt/filewgt/fup.htm"></iframe>
+			<div id="fileupload-wgt">
+				<!-- 
+					iframe height="300px" width="100%" scrolling="no" frameborder="0" src="http://localhost/pt/filewgt/fup.htm"></iframe>
+				-->
 			</div>
 		</div>
 		<div class="side-content four columns panel text-center">

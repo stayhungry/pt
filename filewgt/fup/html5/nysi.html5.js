@@ -29,7 +29,7 @@ NYSI.html5.filemgr.bootstrap = function(){
     var progressBar = $('#progress-bar-' + id);
     if (evt.lengthComputable) {
       var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-    	NYSI.log.console("file[{{id}}] upload in progress {{pct}}%.", {'id': id, 'pct': percentComplete});	
+    	NYSI.log.console("file[{{id}}] upload in progress {{pct}}%.", {"id": id, "pct": percentComplete});	
 			progressBar.css('width', percentComplete + "%");
     }
     else {
@@ -40,7 +40,7 @@ NYSI.html5.filemgr.bootstrap = function(){
   function uploadComplete(evt, id) {
     var progressBar = $('#progress-bar-' + id);
 		progressBar.css('width', "100%");
-    NYSI.log.console("file[{{id}}] upload complete with {{pct}}%.", {'id': id, 'pct': '100'});	
+    NYSI.log.console("file[{{id}}] upload complete with {{pct}}%.", {"id": id, "pct": "100"});	
     var uploadResponse = $('#upload-response-' + id);
     uploadResponse.html(evt.target.responseText);
   }  
@@ -81,10 +81,10 @@ NYSI.html5.filemgr.bootstrap = function(){
 			if (typeof files !== "undefined") {
 				var filestoShow = [];
 				for (var i=0, l=files.length; i<l; i++) {
-					var fileInfo = {'fileId': i, 'fileName': files[i].name, 'fileSize': humanlizeFileSize(files[i].size), 'fileType': files[i].type};
+					var fileInfo = {"fileId": i, "fileName": files[i].name, "fileSize": humanlizeFileSize(files[i].size), "fileType": files[i].type};
 					filestoShow.push(fileInfo);
 				}
-				var data= {'files': filestoShow};
+				var data= {"files": filestoShow};
 				var html=Mustache.to_html($('#tpl-file-list').html(), data);
 				$(html).appendTo('#file-list');
 			}

@@ -32,12 +32,12 @@
       js:
 	      [
           {
-              'test': window.jQuery,
-              'path': 'fup/jquery-1.6.2.min.js'
+              "test": window.jQuery,
+              "path": "fup/jquery-1.6.2.min.js"
 					},
           {
-              'test': window.NYSI.util,
-              'path': 'fup/nysi.util.js'
+              "test": window.NYSI.util,
+              "path": "fup/nysi.util.js"
 					}
 				]
     };
@@ -47,12 +47,12 @@
 			that.init = function init(){
 		  	pathToUpload = "http://mylaptop/pt/filewgt/fup.php"
 				NYSI.util.loadAppRes(that, {
-					'test': 	!!window.FileReader && Modernizr.draganddrop, 
-					'modern': {
-						resources: ['fup/html5/nysi.html5.css', 'fup/html5/nysi.html5.js']
+					"test": 	!!window.FileReader && Modernizr.draganddrop, 
+					"modern": {
+						"resources": ["fup/html5/nysi.html5.css", "fup/html5/nysi.html5.js"]
 					},
-					'legacy' : {
-						resources: ['fup/flash/swfobject.js', 'fup/flash/jquery.uploadify.v2.1.4.min.js', 'fup/flash/uploadify.css', 'fup/flash/nysi.flash.js']
+					"legacy" : {
+						"resources": ["fup/flash/swfobject.js", "fup/flash/jquery.uploadify.v2.1.4.min.js", "fup/flash/uploadify.css", "fup/flash/nysi.flash.js"]
 					}
 				});
 			}

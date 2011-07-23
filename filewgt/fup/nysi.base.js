@@ -76,7 +76,7 @@ NYSI.debug.timed = function(fn, callback) {
 	if (NYSI.util.isFnExist(callback)) {
 	  callback(diff);
 	} else {
-		NYSI.log.console("Function {{funcName}} finished in {{execTime}} millseconds", {'funcName': NYSI.util.getFnName(fn), 'execTime':diff});
+		NYSI.log.console("Function {{funcName}} finished in {{execTime}} millseconds", {"funcName": NYSI.util.getFnName(fn), "execTime":diff});
 	}
 	return result;
 };
@@ -124,14 +124,13 @@ NYSI.framework.bootstrap = function(dependencies, app){
 		var resource = jsDependencies[i].path;
 		if(!loaded){
 			resources.push(resource);
-			NYSI.log.console('Dependency is queued for {{resource}}', {'resource': resource});
-		}
-		else{
-			NYSI.log.console('Dependency already loaded for {{resource}}', {'resource': resource});
+			NYSI.log.console('Dependency is queued for {{resource}}', {"resource": resource});
+		} else {
+			NYSI.log.console('Dependency already loaded for {{resource}}', {"resource": resource});
 		}
 	}
 	var numOfResources = resources.length;
-	NYSI.log.console('Total dependencies to load: {{count}}', {'count': numOfResources});
+	NYSI.log.console('Total dependencies to load: {{count}}', {"count": numOfResources});
 	if(numOfResources > 0){
 		Modernizr.load({
 		  load: resources,
