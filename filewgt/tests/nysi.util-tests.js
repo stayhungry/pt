@@ -44,6 +44,59 @@ test("NYSI.util.getFnName", function() {
 });  
 
 
+test("NYSI.util.createQueue", function() {  
+
+  var queue = NYSI.util.createQueue();
+  equals(
+   	queue.getLength(), 
+   	0 
+  ); 	
+	ok(queue.isEmpty(), "Queue is Empty");
+
+	queue.enqueue("1st");
+	queue.enqueue("2nd");
+	queue.enqueue("3rd");
+	
+  equals(
+   	queue.getLength(), 
+   	3 
+  ); 	
+
+  equals(
+   	queue.peek(), 
+   	"1st" 
+  ); 	
+	
+  equals(
+   	queue.dequeue(), 
+   	"1st" 
+  ); 	
+
+  equals(
+   	queue.getLength(), 
+   	2 
+  ); 	
+
+  equals(
+   	queue.dequeue(), 
+   	"2nd" 
+  ); 	
+
+	queue.enqueue("4th");
+
+  equals(
+   	queue.dequeue(), 
+   	"3rd" 
+  ); 	
+
+  equals(
+   	queue.dequeue(), 
+   	"4th" 
+  ); 	
+
+	ok(queue.isEmpty(), "Queue is Empty");
+
+});  
 
 
 module("CDN loading Test");  

@@ -101,3 +101,40 @@ NYSI.util.jQueryBootStrap = function(app){
 }
 
 
+
+NYSI.util.createQueue = function(){
+
+  var queue  = [];
+  var offset = 0;
+
+	var that = {};
+	
+  that.getLength = function(){
+    return (queue.length - offset);
+  }
+
+  that.isEmpty = function(){
+    return (queue.length == 0);
+  }
+
+  that.enqueue = function(item){
+    queue.push(item);
+  }
+
+  that.dequeue = function(){
+    if (queue.length == 0) return undefined;
+    var item = queue[offset];
+    // increment the offset and remove the free space if necessary
+    if (++ offset * 2 >= queue.length){
+      queue  = queue.slice(offset);
+      offset = 0;
+    }
+    return item;
+  }
+
+  that.peek = function(){
+    return (queue.length > 0 ? queue[offset] : undefined);
+  }
+
+	return that;
+}
