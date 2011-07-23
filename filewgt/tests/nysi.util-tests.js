@@ -43,22 +43,6 @@ test("NYSI.util.getFnName", function() {
 
 });  
 
-test("NYSI.util.timed", function() {  
-
-  function namedFunction(){return 'runned'};
-  equals(
-   	NYSI.util.timed(namedFunction), 
-   	"runned" 
-  ); 	
-
-  function echo(str){return str};
-  equals(
-   	NYSI.util.timed(namedFunction, echo), 
-   	"runned" 
-  ); 	
-
-}); 
-
 
 
 
