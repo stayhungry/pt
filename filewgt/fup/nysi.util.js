@@ -101,7 +101,6 @@ NYSI.util.jQueryBootStrap = function(app){
 }
 
 
-
 NYSI.util.createQueue = function(){
 
   var queue  = [];
@@ -137,4 +136,31 @@ NYSI.util.createQueue = function(){
   }
 
 	return that;
+}
+
+
+NYSI.util.objHelper = function(){};
+NYSI.util.objHelper.prototype = {
+   serialize: function() {
+      var output = [];
+      for(key in this) {
+         output.push(key + ': ' + this[key]);
+      }
+      return output.join(', ');
+   }
+};
+
+
+NYSI.util.augment = function(receivingObj, givingObj, methodArray) {
+   if(methodArray) { // Only give certain methods.
+      for(var i = 0, len = methodArray.length; i < len; i++) {
+         receivingObj.prototype[methodArray[i]] = givingObj.prototype[methodArray[i]];
+      }
+   } else { // Give all methods.
+      for(methodName in givingObj.prototype) {
+         if(!receivingObj.prototype[methodName]) {
+            receivingObj.prototype[methodName] = givingObj.prototype[methodName];
+         }
+      }
+   }
 }

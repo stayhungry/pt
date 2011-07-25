@@ -99,6 +99,18 @@ test("NYSI.util.createQueue", function() {
 });  
 
 
+test("NYSI.util.objHelper", function() {  
+	var Obj= function(){};
+	NYSI.util.augment(Obj, NYSI.util.objHelper);
+  var x = new Obj();
+  equals(
+   	x.serialize(), 
+   	"" 
+  ); 	
+
+});  
+
+
 module("CDN loading Test");  
 yepnope.errorTimeout = 500; 
 
