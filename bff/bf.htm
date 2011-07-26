@@ -1,0 +1,58 @@
+<html>
+<head> 
+<title>Sample File Upload Form</title> 
+</head>
+<body>
+
+<h1>Sample File Upload Form</h1>
+
+<h2>Please fill in the file-upload form below</h2>
+
+<script type="text/javascript">
+function submitform() {
+//var file=document.myform.file;
+var file = document.getElementById('file').files[0];
+
+
+
+if ('mozSlice' in file) {
+  var blob = file.mozSlice(30, 50);
+} else {
+	var blob = file.webkitSlice(30, 50);
+}
+
+var data='';
+var reader = new FileReader();
+    reader.onloadend = function(e) {
+        if (e.target.readyState == FileReader.DONE) {
+                data=e.target.result;
+// do the AJAX request
+var http_request = new XMLHttpRequest();
+//http_request.onreadystatechange = requestdone;
+http_request.open('POST', 'http://10.10.36.118/upload?id=XC46LEr4oFL2a23drrPEA3eZRJcMRAE3TLjsZZR-SZ3AP-oILlqyxveR78UeNzGkKi0FaJk7iLuYfFVyI7ncITA~@n_u+ZS_DEIljl1TYeb4bWNaDftH9Ln2Mn0RLmIx83pI+bMIzlDHANWxYCQzhys8Oe5Sfm0H64kHp+8i9dWYuczwlWsAhLjQgwfVBlwJIZOZXtSqmgcxFdgl88l0bwacM6bjwfRlJ2m32pi6nXhl7F2EqkmoWZwbaf4rPHnkHVWjBXrL4gYuPcSANZNTjbZeDYYKpG2yi1HSHi3Q3iMLoRucKahBVtwY77QOT13pCG+ws2ugav9DdxRToEPtCBn1JH543XnVo8O91PZ+i+IH_qsPNGkHd1C6cklNWSWpTAStPHANKnou_QMZMRON8v1tlgYUEWm_fk6F273rrBYg8+389LV9x+sqa015e3+6Q8lR5C6SftUeMrf9OtwCFLh7ttzwm7tc3g9bP5B4uNWc+8BAKLvqHo5WQg4O5TKWdvBWm93xsu0g62T72HKNGDgDvAaaFckhFGOApR0x4kTc0SRxbQYm+DCaOr+YILLXdk6_G5kYNOjUtEbtoM9NbIKl8VQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5NcaMbh_G3_Iw4BYQEbL7r+UUiXjGJ9Y7w2L3sQbzxR6vMhPtpu6yQ+rVokfA2CK870Oo020TZkc15P+aqyEFRbTcpFdoulstulv3VAbX1ErkCQ+bMIzlDHANWxYCQzhys8OYbojZz7xPLyk0jzKmuuexq9ip8t1BB1mdRmSV1n756Xk7dVxyzSKAo9wppE53UOl6vnjsROy1MD4eeFiJdRzSaiISqdxxyt_NNKTOiJg740SWqhhvvctWyUN9ja1Vzs+iPXWv4+C1IzZ8TiTh58leTJ4pn3Q2DsiRTGV827J+S26xInWfVNxgCbS7vtOLoLdVQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5Nca6xxqW2+YF0bOGEDKjUjz62OWe4evyjqIe_k78sbhpJH3JBC6QSW5O6MIeTqpGg40fQaOTrul2+l1bbsIsGxhOEaEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCG6ANhU0SqgeWdtzI5DFfykvWzj2JKw4BoyrNo4r201SpOKjY70fNmPYqjQJ2awXg0aEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCE_n3TqU5ATtULbGj9WID4mrx0QJSC9U6N0_EU9weneyLgx6E5YPOI72gE5DmDp_rVv31iWjzerMBSEtDwcphOgQilqzdda+FSCLiVdN1o1Gv7PGCvjg_Rk2s3_2DCSOL7HOpUAJy4Fzm+tffFvoVAPyonItDKh7Rn0u4t4HF0n4KXqgQrlFn3ghK9_Ip5rqm+bxKS+YRFIInVszEBHnMZZdmbWl4_rrKIMyGFlkiOBV1iIw4C2zJ9MXisNbqHbMWBIrMuO10LP787ecov0EDuw', true);
+
+http_request.setRequestHeader("X-Content-Range", "bytes 30-50/"+file.size);
+http_request.setRequestHeader("Session-ID", "1111215057");
+http_request.setRequestHeader("Content-Type", "application/octet-stream");
+http_request.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
+//http_request.setRequestHeader("Content-length", data.length);
+http_request.send(data);
+        }
+    };
+reader.readAsBinaryString(blob);
+
+
+}
+</script>
+<form name="myform" method='POST' enctype='multipart/form-data'>
+File to upload: <input type="file" name="file" id="file"><br>
+<!--Notes about the file: <input type=text name=note><br> -->
+<br>
+<a href="javascript: submitform()">Submit</a>
+
+<!-- <input type=submit value=Press> to upload the file! -->
+</form>
+
+<hr>
+</body>
+</html>
