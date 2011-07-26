@@ -11,7 +11,7 @@
     	return;
   }
   /*copy file over to tmp directory */
-  if(move_uploaded_file($tmpfile, "..\\upfiles\\".$filename)){
+  if(move_uploaded_file($tmpfile, "../upfiles/".$filename)){
     $status='Success';
   }else{
     $status='Failed';
