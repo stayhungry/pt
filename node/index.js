@@ -9,10 +9,11 @@ var handle = {};
 handle["/"] = request_handler.index;
 handle["/index"] = request_handler.index;
 handle["/upload"] = request_handler.upload;
+handle["/set_upload"] = request_handler.set_upload;
 handle["/404"] = request_handler.unknown;
 
 // dependency injections stop
 
 // main event loop
-server.start(listening_port, handle);
+server.start(listening_port, handle, handle["/404"]);
 

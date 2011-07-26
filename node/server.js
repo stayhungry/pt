@@ -2,7 +2,7 @@ var http = require("http");
 var url = require("url");
 
 // listen to port, handle requests function array
-function start(port, handle) {
+function start(port, handle, handle_unknown) {
 
   http.createServer(function(request, response) {
 
@@ -10,7 +10,7 @@ function start(port, handle) {
     console.log("request for pathname: "+path+" recieved");
 
     if ( typeof handle[path] === 'function' ) handle[path](request,response);
-    else handle["/404"](request,response);
+    else handle_unknown(request,response);
 
   }).listen(port);
 
