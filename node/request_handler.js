@@ -6,8 +6,12 @@ var url = require("url"),
 function index(req, res) {
   console.log("upload path: "+this.doc_root);
   res.writeHead(200, {"Content-Type": "text/html"});
+  for (var property in this) {
+    if ( typeof this[property] == 'string' ) res.write(property+": "+this[property]+"<br/>");
+  }
+
+  res.write('<a href="/set_upload">set_upload</a>: sets up a html form for uploading file from browser<br/>');
   res.write('<a href="/upload">upload</a>: form post of file(s)<br/>');
-  res.write('<a href="/set_upload">set_upload</a>: sets up a html form for uploading file from browser');
   res.end();
 }
 
