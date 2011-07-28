@@ -13,11 +13,16 @@
 	function submitform() {
 		var file = document.getElementById('file').files[0];
 		var fileSize = file.size;
-	 	const BYTES_PER_CHUNK = 1024 * 8; // 1MB chunk sizes.
+		//var fileName = file.name;
+	 	var fileName = '' + new Date().getTime();
+		var uploadQueue = createQueue();
+	 	const BYTES_PER_CHUNK = 1 * 1024 * 1024; // 1MB chunk sizes.
   	var start = 0;
   	var end = BYTES_PER_CHUNK;
-
 	  while(start < fileSize) {
+	    if (end > fileSize){
+	    	end = fileSize;
+	    }
 	    if ('mozSlice' in file) {
 	      var contentChunk = file.mozSlice(start, end);
 	    } else {
@@ -25,37 +30,86 @@
 	    }
 			var contentRange = "bytes " + start + "-" + end + "/" + fileSize;
 			console.log("DEBUG: upload chunk range: " + contentRange);
-		  uploadFileChunk(contentChunk, contentRange);
+		  uploadFileChunk(contentChunk, contentRange, fileName);
 	
 	    start = end;
 	    end = start + BYTES_PER_CHUNK;
-	    if (end > fileSize){
-	    	end = fileSize;
-	    }
 	  }
 	}
 
-	function uploadFileChunk(chunk, range) {
+	function uploadFileChunk(chunk, range, fileName) {
 	
 		var reader = new FileReader();
 		//bind the events
 		reader.onloadend = function(e) {
 			if (e.target.readyState == FileReader.DONE) {
 				var data = e.target.result;
-				var http_request = new XMLHttpRequest();
-				//http_request.onreadystatechange = requestdone;
-				http_request.open('POST', uploadUrl, true);
-				http_request.setRequestHeader("X-Content-Range", range);
-				http_request.setRequestHeader("Session-ID", "1111215057");
-				http_request.setRequestHeader("Content-Type", "application/octet-stream");
-				http_request.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
-				//http_request.setRequestHeader("Content-length", data.length);
-				http_request.send(data);
+				var xhr = new XMLHttpRequest();
+		    //xhr.upload.addEventListener("progress", function(evt){uploadComplete(evt, range)}, false);
+		    xhr.addEventListener("load", function(evt){uploadComplete(evt, range)}, false);
+    		xhr.addEventListener("error", function(evt){uploadFailed(evt, range)}, false);
+    		xhr.addEventListener("abort", function(evt){uploadCanceled(evt, range)}, false);
+				xhr.open('POST', uploadUrl, true);
+				xhr.setRequestHeader("X-Content-Range", range);
+				xhr.setRequestHeader("Session-ID", fileName);
+				xhr.setRequestHeader("Content-Type", "application/octet-stream");
+				xhr.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
+				xhr.send(data);
 		  }
 		};
 		reader.readAsBinaryString(chunk);
-	
 	}
+	
+  function uploadComplete(evt, range) {
+			console.log("DEBUG: upload completed for chunk range : " + range);
+  }  
+	
+  function uploadFailed(evt, range) {
+			console.log("DEBUG: upload failed for chunk range : " + range);
+  }  
+
+  function uploadCanceled(evt, range) {
+			console.log("DEBUG: upload aborted for chunk range : " + range);
+  }  
+
+
+	function createQueue (){
+	
+	  var queue  = [];
+	  var offset = 0;
+	
+		var that = {};
+		
+	  that.getLength = function(){
+	    return (queue.length - offset);
+	  }
+	
+	  that.isEmpty = function(){
+	    return (queue.length == 0);
+	  }
+	
+	  that.enqueue = function(item){
+	    queue.push(item);
+	  }
+	
+	  that.dequeue = function(){
+	    if (queue.length == 0) return undefined;
+	    var item = queue[offset];
+	    // increment the offset and remove the free space if necessary
+	    if (++ offset * 2 >= queue.length){
+	      queue  = queue.slice(offset);
+	      offset = 0;
+	    }
+	    return item;
+	  }
+	
+	  that.peek = function(){
+	    return (queue.length > 0 ? queue[offset] : undefined);
+	  }
+	
+		return that;
+	}
+	
 </script>
 
 <form name="myform" method='POST' enctype='multipart/form-data'>
