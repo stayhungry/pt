@@ -82,11 +82,13 @@
 		if(!chunkQueue.isEmpty()){
 			var chunk = chunkQueue.dequeue();
 			var file = chunk.file;
-	    if ('mozSlice' in file) {
-	      var contentChunk = file.mozSlice(chunk.start, chunk.end);
-	    } else {
-	      var contentChunk = file.webkitSlice(chunk.start, chunk.end);
-	    }
+			if (file.mozSlice) {
+				var contentChunk = file.mozSlice(chunk.start, chunk.end);
+			} else if (file.webkitSlice) {
+				var contentChunk = file.webkitSlice(chunk.start, chunk.end);
+			} else if (file.slice) {
+				var contentChunk = file.slice(chunk.start, chunk.end);
+			}
 			console.log("DEBUG: upload started for chunk range: " + chunk.range);
 		  uploadFileChunk(contentChunk, chunk.range, chunk.name);
 		}
@@ -99,7 +101,6 @@
 		//bind the events
 		reader.onloadend = function(e) {
 			if (e.target.readyState == FileReader.DONE) {
-				var data = e.target.result;
 				var xhr = new XMLHttpRequest();
 		    //xhr.upload.addEventListener("progress", function(evt){uploadComplete(evt, range)}, false);
 		    xhr.addEventListener("loadend", function(evt){uploadComplete(evt, range)}, false);
@@ -111,7 +112,7 @@
 				xhr.setRequestHeader("Session-ID", fileName);
 				xhr.setRequestHeader("Content-Type", "application/octet-stream");
 				xhr.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
-				xhr.send(data);
+				xhr.send(chunk);
 		  }
 		};
 		reader.readAsBinaryString(chunk);
