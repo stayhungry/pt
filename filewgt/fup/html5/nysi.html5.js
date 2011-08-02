@@ -67,7 +67,7 @@ NYSI.html5.filemgr.bootstrap = function(){
 
   function humanlizeFileSize(size) {        
 	  var fileSize = 0;
-    if (size > 1024 * 1024){
+    if (size >= 1024 * 1024){
       fileSize = (Math.round(size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
     }
     else{

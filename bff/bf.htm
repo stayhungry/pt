@@ -9,10 +9,12 @@
 	File to upload: <input type="file" name="file" id="file"><input type="button" value="Upload" onclick="submitform()"/>
 </form>
 
+<span id="file-info">File Size</span> | <span id="chunk-info">Chunk Info</span> | <span id="progress-text">Upload Progress</span>
+
 <div class="progress-bar-container">
 	<div id="progress-bar" class="progress-bar"></div>
-	<div id="progress-text" class="progress-text"></div>
 </div>
+
 
 
 <style>
@@ -37,11 +39,12 @@
  	const BYTES_PER_CHUNK = 1024 * 1024; // 1MB chunk sizes.
  	const MAX_CONCURRENT_CHUNK = 3; 
 	var chunkQueue = createQueue();
-	var initQueueSize, progressBar, progressText;
+	var initQueueSize, queueSize, progressBar, progressText;
 
 	function submitform() {
 	  progressBar = document.getElementById("progress-bar");
 	  progressText = document.getElementById("progress-text");
+	  progressText.innerHTML ="0%";
 		var file = document.getElementById('file').files[0];
 		var fileSize = file.size;
 		//var fileName = file.name;
@@ -66,6 +69,9 @@
 	    end = start + BYTES_PER_CHUNK;
 	  }
 		initQueueSize = chunkQueue.getLength();
+		queueSize = initQueueSize;
+		document.getElementById("file-info").innerHTML = "Total: " + humanlizeFileSize(fileSize);
+		document.getElementById("chunk-info").innerHTML = queueSize + " chunks(" + humanlizeFileSize(BYTES_PER_CHUNK) + "/chunk)";
 		for (var i=0; i<MAX_CONCURRENT_CHUNK; i++) {
 			processChuckQueue(chunkQueue);
 		}
@@ -112,9 +118,10 @@
 	}
 	
   function uploadComplete(evt, range) {
+  	  queueSize--; 
   		processChuckQueue(chunkQueue);
 			console.log("DEBUG: upload completed for chunk range : " + range);
-			var percentComplete = Math.round((initQueueSize - chunkQueue.getLength()) * 100 / initQueueSize) + "%"; 
+			var percentComplete = Math.round((initQueueSize - queueSize) * 100 / initQueueSize) + "%"; 
 			console.log("DEBUG: file upload in process with percentage of : " + percentComplete);
 			progressBar.style.width = percentComplete;
 			progressText.innerHTML = percentComplete;
@@ -133,6 +140,16 @@
 			console.log("DEBUG: upload aborted for chunk range : " + range);
   }  
 
+  function humanlizeFileSize(size) {        
+	  var fileSize = 0;
+    if (size >= 1024 * 1024){
+      fileSize = (Math.round(size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+    }
+    else{
+      fileSize = (Math.round(size * 100 / 1024) / 100).toString() + 'KB';
+    }
+    return fileSize;
+  }
 
 	function createQueue (){
 	
