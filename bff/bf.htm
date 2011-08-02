@@ -1,41 +1,91 @@
 <html>
 <head> 
-<title>Sample File Upload Form</title> 
+<title>Simple Agent Uploader</title> 
 </head>
 <body>
 
-<h1>Sample File Upload Form</h1>
-<h2>Please fill in the file-upload form below</h2>
+<h2>Simple Agent Uploader</h2>
+<form name="myform" method='POST' enctype='multipart/form-data'>
+	File to upload: <input type="file" name="file" id="file"><input type="button" value="Upload" onclick="submitform()"/>
+</form>
+
+<div class="progress-bar-container">
+	<div id="progress-bar" class="progress-bar"></div>
+	<div id="progress-text" class="progress-text"></div>
+</div>
+
+
+<style>
+.progress-bar-container {
+	width: 300px;
+	height: 10px;
+	border: 1px solid #555;
+	margin-bottom: 20px;
+}
+
+.progress-bar {
+	width: 0;
+	height: 10px;
+	font-weight: bold;
+	background: #6787e3;
+}
+	
+</style>
 
 <script type="text/javascript">
 	var uploadUrl = 'http://10.10.36.118/upload?id=XC46LEr4oFL2a23drrPEA3eZRJcMRAE3TLjsZZR-SZ3AP-oILlqyxveR78UeNzGkKi0FaJk7iLuYfFVyI7ncITA~@n_u+ZS_DEIljl1TYeb4bWNaDftH9Ln2Mn0RLmIx83pI+bMIzlDHANWxYCQzhys8Oe5Sfm0H64kHp+8i9dWYuczwlWsAhLjQgwfVBlwJIZOZXtSqmgcxFdgl88l0bwacM6bjwfRlJ2m32pi6nXhl7F2EqkmoWZwbaf4rPHnkHVWjBXrL4gYuPcSANZNTjbZeDYYKpG2yi1HSHi3Q3iMLoRucKahBVtwY77QOT13pCG+ws2ugav9DdxRToEPtCBn1JH543XnVo8O91PZ+i+IH_qsPNGkHd1C6cklNWSWpTAStPHANKnou_QMZMRON8v1tlgYUEWm_fk6F273rrBYg8+389LV9x+sqa015e3+6Q8lR5C6SftUeMrf9OtwCFLh7ttzwm7tc3g9bP5B4uNWc+8BAKLvqHo5WQg4O5TKWdvBWm93xsu0g62T72HKNGDgDvAaaFckhFGOApR0x4kTc0SRxbQYm+DCaOr+YILLXdk6_G5kYNOjUtEbtoM9NbIKl8VQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5NcaMbh_G3_Iw4BYQEbL7r+UUiXjGJ9Y7w2L3sQbzxR6vMhPtpu6yQ+rVokfA2CK870Oo020TZkc15P+aqyEFRbTcpFdoulstulv3VAbX1ErkCQ+bMIzlDHANWxYCQzhys8OYbojZz7xPLyk0jzKmuuexq9ip8t1BB1mdRmSV1n756Xk7dVxyzSKAo9wppE53UOl6vnjsROy1MD4eeFiJdRzSaiISqdxxyt_NNKTOiJg740SWqhhvvctWyUN9ja1Vzs+iPXWv4+C1IzZ8TiTh58leTJ4pn3Q2DsiRTGV827J+S26xInWfVNxgCbS7vtOLoLdVQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5Nca6xxqW2+YF0bOGEDKjUjz62OWe4evyjqIe_k78sbhpJH3JBC6QSW5O6MIeTqpGg40fQaOTrul2+l1bbsIsGxhOEaEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCG6ANhU0SqgeWdtzI5DFfykvWzj2JKw4BoyrNo4r201SpOKjY70fNmPYqjQJ2awXg0aEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCE_n3TqU5ATtULbGj9WID4mrx0QJSC9U6N0_EU9weneyLgx6E5YPOI72gE5DmDp_rVv31iWjzerMBSEtDwcphOgQilqzdda+FSCLiVdN1o1Gv7PGCvjg_Rk2s3_2DCSOL7HOpUAJy4Fzm+tffFvoVAPyonItDKh7Rn0u4t4HF0n4KXqgQrlFn3ghK9_Ip5rqm+bxKS+YRFIInVszEBHnMZZdmbWl4_rrKIMyGFlkiOBV1iIw4C2zJ9MXisNbqHbMWBIrMuO10LP787ecov0EDuw';
+ 	const BYTES_PER_CHUNK = 1024 * 1024; // 1MB chunk sizes.
+ 	const MAX_CONCURRENT_CHUNK = 3; 
+	var chunkQueue = createQueue();
+	var initQueueSize, progressBar, progressText;
 
 	function submitform() {
+	  progressBar = document.getElementById("progress-bar");
+	  progressText = document.getElementById("progress-text");
 		var file = document.getElementById('file').files[0];
 		var fileSize = file.size;
 		//var fileName = file.name;
 	 	var fileName = '' + new Date().getTime();
-		var uploadQueue = createQueue();
-	 	const BYTES_PER_CHUNK = 1 * 1024 * 1024; // 1MB chunk sizes.
   	var start = 0;
   	var end = BYTES_PER_CHUNK;
 	  while(start < fileSize) {
 	    if (end > fileSize){
 	    	end = fileSize;
 	    }
-	    if ('mozSlice' in file) {
-	      var contentChunk = file.mozSlice(start, end);
-	    } else {
-	      var contentChunk = file.webkitSlice(start, end);
-	    }
-			var contentRange = "bytes " + start + "-" + end + "/" + fileSize;
-			console.log("DEBUG: upload chunk range: " + contentRange);
-		  uploadFileChunk(contentChunk, contentRange, fileName);
-	
+			var contentRange = "bytes " + start + "-" + (end-1) + "/" + fileSize;
+			var chunkInfo = {
+				"file": file, 
+				"name": fileName, 
+				"start": start, 
+				"end": end, 
+				"range": contentRange 
+			};
+			chunkQueue.enqueue(chunkInfo);
+		
 	    start = end;
 	    end = start + BYTES_PER_CHUNK;
 	  }
+		initQueueSize = chunkQueue.getLength();
+		for (var i=0; i<MAX_CONCURRENT_CHUNK; i++) {
+			processChuckQueue(chunkQueue);
+		}
+	  
 	}
+
+	function processChuckQueue(chunkQueue) {
+		if(!chunkQueue.isEmpty()){
+			var chunk = chunkQueue.dequeue();
+			var file = chunk.file;
+	    if ('mozSlice' in file) {
+	      var contentChunk = file.mozSlice(chunk.start, chunk.end);
+	    } else {
+	      var contentChunk = file.webkitSlice(chunk.start, chunk.end);
+	    }
+			console.log("DEBUG: upload started for chunk range: " + chunk.range);
+		  uploadFileChunk(contentChunk, chunk.range, chunk.name);
+		}
+	}
+
 
 	function uploadFileChunk(chunk, range, fileName) {
 	
@@ -46,7 +96,8 @@
 				var data = e.target.result;
 				var xhr = new XMLHttpRequest();
 		    //xhr.upload.addEventListener("progress", function(evt){uploadComplete(evt, range)}, false);
-		    xhr.addEventListener("load", function(evt){uploadComplete(evt, range)}, false);
+		    xhr.addEventListener("loadend", function(evt){uploadComplete(evt, range)}, false);
+		    xhr.addEventListener("load", function(evt){uploadSuccess(evt, range)}, false);
     		xhr.addEventListener("error", function(evt){uploadFailed(evt, range)}, false);
     		xhr.addEventListener("abort", function(evt){uploadCanceled(evt, range)}, false);
 				xhr.open('POST', uploadUrl, true);
@@ -61,7 +112,17 @@
 	}
 	
   function uploadComplete(evt, range) {
+  		processChuckQueue(chunkQueue);
 			console.log("DEBUG: upload completed for chunk range : " + range);
+			var percentComplete = Math.round((initQueueSize - chunkQueue.getLength()) * 100 / initQueueSize) + "%"; 
+			console.log("DEBUG: file upload in process with percentage of : " + percentComplete);
+			progressBar.style.width = percentComplete;
+			progressText.innerHTML = percentComplete;
+
+  }  
+
+  function uploadSuccess(evt, range) {
+			console.log("DEBUG: upload suceeded for chunk range : " + range);
   }  
 	
   function uploadFailed(evt, range) {
@@ -112,11 +173,6 @@
 	
 </script>
 
-<form name="myform" method='POST' enctype='multipart/form-data'>
-	File to upload: <input type="file" name="file" id="file">
-	<br><br>
-	<a href="javascript: submitform()">Submit</a>
-</form>
 
 </body>
 </html>
