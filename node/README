@@ -1,2 +1,6 @@
 1. download & install node.js & npm
-2. npm install formidable
+2. npm install formidable /* already done - just documenting */
+3. create the directories: content/uploaded_files
+
+start the server: 
+$ node index.js

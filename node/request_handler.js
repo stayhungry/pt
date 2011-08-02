@@ -3,15 +3,23 @@ var url = require("url"),
     formidable = require("formidable");
 
 // api for introspecting server methods
+// TODO: read up methods & annotations from the handler object
 function index(req, res) {
   console.log("upload path: "+this.doc_root);
   res.writeHead(200, {"Content-Type": "text/html"});
+  var body = '<html>'+
+    '<head>'+
+    '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'+
+    '</head>'+
+    '<body>';
+  res.write(body);
   for (var property in this) {
-    if ( typeof this[property] == 'string' ) res.write(property+": "+this[property]+"<br/>");
+    if ( typeof this[property] === 'string' ) res.write(property+": "+this[property]+"<br/>");
   }
 
   res.write('<a href="/set_upload">set_upload</a>: sets up a html form for uploading file from browser<br/>');
   res.write('<a href="/upload">upload</a>: form post of file(s)<br/>');
+  res.write('</body></html>');
   res.end();
 }
 
@@ -38,11 +46,12 @@ function set_upload(req, res) {
 
 // api for uploading files
 // needs 'file_save_path' information to be injected
+// TODO: fix the file name, introspect the JSON object
 function upload(req, res) {
   console.log("Inside Request handler 'upload'");
 
   var form = new formidable.IncomingForm();
-  var dir = this.file_save_path;
+  var dir = this.file_save_path; // 'this.' cannot be used inside an inline function!!
 
   console.log("about to parse");
   form.parse(req, function(error, fields, files) {
