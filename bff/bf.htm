@@ -1,23 +1,36 @@
-<html>
+<!DOCTYPE html>
 <head> 
-<title>Simple Agent Uploader</title> 
-</head>
-<body>
-
-<h2>Simple Agent Uploader</h2>
-<form name="myform" method='POST' enctype='multipart/form-data'>
-	File to upload: <input type="file" name="file" id="file"><input type="button" value="Upload" onclick="submitform()"/>
-</form>
-
-<span id="file-info">File Size</span> | <span id="chunk-info">Chunk Info</span> | <span id="progress-text">Upload Progress</span>
-
-<div class="progress-bar-container">
-	<div id="progress-bar" class="progress-bar"></div>
-</div>
-
-
+<title>Big File Uploader</title> 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script>
 
 <style>
+	
+body {
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Verdana, sans-serif;
+	font-size: 62.5%;
+}
+
+h1 {
+	font-size: 1.2rem;
+}
+
+div.panel { 
+	width: 400px;
+	min-height:200px;
+	height: expression( this.scrollHeight < 200 ? "200px" : "auto" );
+	padding: 20px 20px 2px 20px;
+	background: #efefef;
+	background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F4F4F4',GradientType=0 );
+	-webkit-box-shadow: 0px 2px 5px rgba(0,0,0,0.35);
+	-moz-box-shadow: 0px 2px 5px rgba(0,0,0,0.25);
+	margin: 0 0 20px 0;
+}
+	
+.hidden {display: none;}
+
 .progress-bar-container {
 	width: 300px;
 	height: 10px;
@@ -31,164 +44,241 @@
 	font-weight: bold;
 	background: #6787e3;
 }
-	
+
+#upload-form {
+	margin: 30px 0 20px 0;
+}
+
+#file-info {
+	margin-bottom: 5px;
+}
+
 </style>
+</head>
+
+<body>
+
+<div class="panel">
+
+	<h1>Big File Uploader</h1>
+	
+	<div id="upload-form">
+		<form name="myform" method='POST' enctype='multipart/form-data'>
+			<input type="file" name="file" id="file" onchange="chooseFile()">
+			<input type="button" value="Upload" onclick="submitform()"/>
+		</form>
+	</div>
+	
+	<div id="file-info">
+		<span id="file-meta">File Size</span> |  <span id="thread-info">Thread Info</span> | <span id="chunk-info">Chunk Info</span> | <span id="progress-text">Upload Progress</span>
+	</div>
+	
+	<div id="upload-progress" class="progress-bar-container">
+		<div id="progress-bar" class="progress-bar"></div>
+	</div>
+
+	<div id="download-link" class="hidden">
+		<a href="/0374-e5500/b48/1a6/2c2a4435-ef61-4355-a184-4e26bc16bf04.00000000000000000001">click to download</a>
+	</div>
+
+</div>
 
 <script type="text/javascript">
-	var uploadUrl = 'http://10.10.36.118/upload?id=XC46LEr4oFL2a23drrPEA3eZRJcMRAE3TLjsZZR-SZ3AP-oILlqyxveR78UeNzGkKi0FaJk7iLuYfFVyI7ncITA~@n_u+ZS_DEIljl1TYeb4bWNaDftH9Ln2Mn0RLmIx83pI+bMIzlDHANWxYCQzhys8Oe5Sfm0H64kHp+8i9dWYuczwlWsAhLjQgwfVBlwJIZOZXtSqmgcxFdgl88l0bwacM6bjwfRlJ2m32pi6nXhl7F2EqkmoWZwbaf4rPHnkHVWjBXrL4gYuPcSANZNTjbZeDYYKpG2yi1HSHi3Q3iMLoRucKahBVtwY77QOT13pCG+ws2ugav9DdxRToEPtCBn1JH543XnVo8O91PZ+i+IH_qsPNGkHd1C6cklNWSWpTAStPHANKnou_QMZMRON8v1tlgYUEWm_fk6F273rrBYg8+389LV9x+sqa015e3+6Q8lR5C6SftUeMrf9OtwCFLh7ttzwm7tc3g9bP5B4uNWc+8BAKLvqHo5WQg4O5TKWdvBWm93xsu0g62T72HKNGDgDvAaaFckhFGOApR0x4kTc0SRxbQYm+DCaOr+YILLXdk6_G5kYNOjUtEbtoM9NbIKl8VQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5NcaMbh_G3_Iw4BYQEbL7r+UUiXjGJ9Y7w2L3sQbzxR6vMhPtpu6yQ+rVokfA2CK870Oo020TZkc15P+aqyEFRbTcpFdoulstulv3VAbX1ErkCQ+bMIzlDHANWxYCQzhys8OYbojZz7xPLyk0jzKmuuexq9ip8t1BB1mdRmSV1n756Xk7dVxyzSKAo9wppE53UOl6vnjsROy1MD4eeFiJdRzSaiISqdxxyt_NNKTOiJg740SWqhhvvctWyUN9ja1Vzs+iPXWv4+C1IzZ8TiTh58leTJ4pn3Q2DsiRTGV827J+S26xInWfVNxgCbS7vtOLoLdVQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5Nca6xxqW2+YF0bOGEDKjUjz62OWe4evyjqIe_k78sbhpJH3JBC6QSW5O6MIeTqpGg40fQaOTrul2+l1bbsIsGxhOEaEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCG6ANhU0SqgeWdtzI5DFfykvWzj2JKw4BoyrNo4r201SpOKjY70fNmPYqjQJ2awXg0aEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCE_n3TqU5ATtULbGj9WID4mrx0QJSC9U6N0_EU9weneyLgx6E5YPOI72gE5DmDp_rVv31iWjzerMBSEtDwcphOgQilqzdda+FSCLiVdN1o1Gv7PGCvjg_Rk2s3_2DCSOL7HOpUAJy4Fzm+tffFvoVAPyonItDKh7Rn0u4t4HF0n4KXqgQrlFn3ghK9_Ip5rqm+bxKS+YRFIInVszEBHnMZZdmbWl4_rrKIMyGFlkiOBV1iIw4C2zJ9MXisNbqHbMWBIrMuO10LP787ecov0EDuw';
- 	const BYTES_PER_CHUNK = 1024 * 1024; // 1MB chunk sizes.
- 	const MAX_CONCURRENT_CHUNK = 3; 
-	var chunkQueue = createQueue();
-	var initQueueSize, queueSize, progressBar, progressText;
 
-	function submitform() {
-	  progressBar = document.getElementById("progress-bar");
-	  progressText = document.getElementById("progress-text");
-	  progressText.innerHTML ="0%";
-		var file = document.getElementById('file').files[0];
-		var fileSize = file.size;
-		//var fileName = file.name;
-	 	var fileName = '' + new Date().getTime();
-  	var start = 0;
-  	var end = BYTES_PER_CHUNK;
-	  while(start < fileSize) {
-	    if (end > fileSize){
-	    	end = fileSize;
-	    }
-			var contentRange = "bytes " + start + "-" + (end-1) + "/" + fileSize;
-			var chunkInfo = {
-				"file": file, 
-				"name": fileName, 
-				"start": start, 
-				"end": end, 
-				"range": contentRange 
-			};
-			chunkQueue.enqueue(chunkInfo);
-		
-	    start = end;
-	    end = start + BYTES_PER_CHUNK;
-	  }
-		initQueueSize = chunkQueue.getLength();
-		queueSize = initQueueSize;
-		document.getElementById("file-info").innerHTML = "Total: " + humanlizeFileSize(fileSize);
-		document.getElementById("chunk-info").innerHTML = queueSize + " chunks(" + humanlizeFileSize(BYTES_PER_CHUNK) + "/chunk)";
-		for (var i=0; i<MAX_CONCURRENT_CHUNK; i++) {
-			processChuckQueue(chunkQueue);
-		}
-	  
-	}
-
-	function processChuckQueue(chunkQueue) {
-		if(!chunkQueue.isEmpty()){
-			var chunk = chunkQueue.dequeue();
-			var file = chunk.file;
-			if (file.mozSlice) {
-				var contentChunk = file.mozSlice(chunk.start, chunk.end);
-			} else if (file.webkitSlice) {
-				var contentChunk = file.webkitSlice(chunk.start, chunk.end);
-			} else if (file.slice) {
-				var contentChunk = file.slice(chunk.start, chunk.end);
-			}
-			console.log("DEBUG: upload started for chunk range: " + chunk.range);
-		  uploadFileChunk(contentChunk, chunk.range, chunk.name);
-		}
-	}
-
-
-	function uploadFileChunk(chunk, range, fileName) {
 	
-		var reader = new FileReader();
-		//bind the events
-		reader.onloadend = function(e) {
-			if (e.target.readyState == FileReader.DONE) {
-				var xhr = new XMLHttpRequest();
-		    //xhr.upload.addEventListener("progress", function(evt){uploadComplete(evt, range)}, false);
-		    xhr.addEventListener("loadend", function(evt){uploadComplete(evt, range)}, false);
-		    xhr.addEventListener("load", function(evt){uploadSuccess(evt, range)}, false);
-    		xhr.addEventListener("error", function(evt){uploadFailed(evt, range)}, false);
-    		xhr.addEventListener("abort", function(evt){uploadCanceled(evt, range)}, false);
-				xhr.open('POST', uploadUrl, true);
-				xhr.setRequestHeader("X-Content-Range", range);
-				xhr.setRequestHeader("Session-ID", fileName);
-				xhr.setRequestHeader("Content-Type", "application/octet-stream");
-				xhr.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
-				xhr.send(chunk);
-		  }
+const BYTES_PER_CHUNK = 1024 * 1024; // 1MB chunk sizes.
+const MAX_CONCURRENT_CHUNK = 3; 
+const FILE_STORGAGE_KEY = "fileUploading"; 
+//var uploadUrl = 'http://10.10.36.118/upload?id=XC46LEr4oFL2a23drrPEA3eZRJcMRAE3TLjsZZR-SZ3AP-oILlqyxveR78UeNzGkKi0FaJk7iLuYfFVyI7ncITA~@n_u+ZS_DEIljl1TYeb4bWNaDftH9Ln2Mn0RLmIx83pI+bMIzlDHANWxYCQzhys8Oe5Sfm0H64kHp+8i9dWYuczwlWsAhLjQgwfVBlwJIZOZXtSqmgcxFdgl88l0bwacM6bjwfRlJ2m32pi6nXhl7F2EqkmoWZwbaf4rPHnkHVWjBXrL4gYuPcSANZNTjbZeDYYKpG2yi1HSHi3Q3iMLoRucKahBVtwY77QOT13pCG+ws2ugav9DdxRToEPtCBn1JH543XnVo8O91PZ+i+IH_qsPNGkHd1C6cklNWSWpTAStPHANKnou_QMZMRON8v1tlgYUEWm_fk6F273rrBYg8+389LV9x+sqa015e3+6Q8lR5C6SftUeMrf9OtwCFLh7ttzwm7tc3g9bP5B4uNWc+8BAKLvqHo5WQg4O5TKWdvBWm93xsu0g62T72HKNGDgDvAaaFckhFGOApR0x4kTc0SRxbQYm+DCaOr+YILLXdk6_G5kYNOjUtEbtoM9NbIKl8VQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5NcaMbh_G3_Iw4BYQEbL7r+UUiXjGJ9Y7w2L3sQbzxR6vMhPtpu6yQ+rVokfA2CK870Oo020TZkc15P+aqyEFRbTcpFdoulstulv3VAbX1ErkCQ+bMIzlDHANWxYCQzhys8OYbojZz7xPLyk0jzKmuuexq9ip8t1BB1mdRmSV1n756Xk7dVxyzSKAo9wppE53UOl6vnjsROy1MD4eeFiJdRzSaiISqdxxyt_NNKTOiJg740SWqhhvvctWyUN9ja1Vzs+iPXWv4+C1IzZ8TiTh58leTJ4pn3Q2DsiRTGV827J+S26xInWfVNxgCbS7vtOLoLdVQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5Nca6xxqW2+YF0bOGEDKjUjz62OWe4evyjqIe_k78sbhpJH3JBC6QSW5O6MIeTqpGg40fQaOTrul2+l1bbsIsGxhOEaEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCG6ANhU0SqgeWdtzI5DFfykvWzj2JKw4BoyrNo4r201SpOKjY70fNmPYqjQJ2awXg0aEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCE_n3TqU5ATtULbGj9WID4mrx0QJSC9U6N0_EU9weneyLgx6E5YPOI72gE5DmDp_rVv31iWjzerMBSEtDwcphOgQilqzdda+FSCLiVdN1o1Gv7PGCvjg_Rk2s3_2DCSOL7HOpUAJy4Fzm+tffFvoVAPyonItDKh7Rn0u4t4HF0n4KXqgQrlFn3ghK9_Ip5rqm+bxKS+YRFIInVszEBHnMZZdmbWl4_rrKIMyGFlkiOBV1iIw4C2zJ9MXisNbqHbMWBIrMuO10LP787ecov0EDuw';
+var uploadUrl = '/upload?id=XC46LEr4oFL2a23drrPEA3eZRJcMRAE3TLjsZZR-SZ3AP-oILlqyxveR78UeNzGkKi0FaJk7iLuYfFVyI7ncITA~@n_u+ZS_DEIljl1TYeb4bWNaDftH9Ln2Mn0RLmIx83pI+bMIzlDHANWxYCQzhys8Oe5Sfm0H64kHp+8i9dWYuczwlWsAhLjQgwfVBlwJIZOZXtSqmgcxFdgl88l0bwacM6bjwfRlJ2m32pi6nXhl7F2EqkmoWZwbaf4rPHnkHVWjBXrL4gYuPcSANZNTjbZeDYYKpG2yi1HSHi3Q3iMLoRucKahBVtwY77QOT13pCG+ws2ugav9DdxRToEPtCBn1JH543XnVo8O91PZ+i+IH_qsPNGkHd1C6cklNWSWpTAStPHANKnou_QMZMRON8v1tlgYUEWm_fk6F273rrBYg8+389LV9x+sqa015e3+6Q8lR5C6SftUeMrf9OtwCFLh7ttzwm7tc3g9bP5B4uNWc+8BAKLvqHo5WQg4O5TKWdvBWm93xsu0g62T72HKNGDgDvAaaFckhFGOApR0x4kTc0SRxbQYm+DCaOr+YILLXdk6_G5kYNOjUtEbtoM9NbIKl8VQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5NcaMbh_G3_Iw4BYQEbL7r+UUiXjGJ9Y7w2L3sQbzxR6vMhPtpu6yQ+rVokfA2CK870Oo020TZkc15P+aqyEFRbTcpFdoulstulv3VAbX1ErkCQ+bMIzlDHANWxYCQzhys8OYbojZz7xPLyk0jzKmuuexq9ip8t1BB1mdRmSV1n756Xk7dVxyzSKAo9wppE53UOl6vnjsROy1MD4eeFiJdRzSaiISqdxxyt_NNKTOiJg740SWqhhvvctWyUN9ja1Vzs+iPXWv4+C1IzZ8TiTh58leTJ4pn3Q2DsiRTGV827J+S26xInWfVNxgCbS7vtOLoLdVQ_PpkWFWI5VRTTH2E_N3I35kakhY9hsdqzHN6ybYidLbp7dg6TQuipVDKd+5Nca6xxqW2+YF0bOGEDKjUjz62OWe4evyjqIe_k78sbhpJH3JBC6QSW5O6MIeTqpGg40fQaOTrul2+l1bbsIsGxhOEaEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCG6ANhU0SqgeWdtzI5DFfykvWzj2JKw4BoyrNo4r201SpOKjY70fNmPYqjQJ2awXg0aEtlA6rKnwiLdEOTNl2ffbZV9O+OqZDSWarUuP4dmeZoe2dHrvbjLrjQYT0vrkCE_n3TqU5ATtULbGj9WID4mrx0QJSC9U6N0_EU9weneyLgx6E5YPOI72gE5DmDp_rVv31iWjzerMBSEtDwcphOgQilqzdda+FSCLiVdN1o1Gv7PGCvjg_Rk2s3_2DCSOL7HOpUAJy4Fzm+tffFvoVAPyonItDKh7Rn0u4t4HF0n4KXqgQrlFn3ghK9_Ip5rqm+bxKS+YRFIInVszEBHnMZZdmbWl4_rrKIMyGFlkiOBV1iIw4C2zJ9MXisNbqHbMWBIrMuO10LP787ecov0EDuw';
+var chunkQueue = createQueue();
+var fileInfo, initQueueSize, queueSize, progressBar, progressText, downLoadLink;
+
+$(function(){
+	fileInfo = localStorage.getItem(FILE_STORGAGE_KEY, fileInfo);
+	console.log("DEBUG: file stored previously: " + fileInfo.file);
+
+});
+
+function chooseFile() {
+	var file = document.getElementById('file').files[0];
+	var fileSize = file.size;
+	//var fileName = file.name;
+	//var fileName = '' + new Date().getTime();
+	var fileName = "1234567890";
+	fileInfo = {
+		"file": file, 
+		"name": fileName, 
+		"size": fileSize
+	};
+	localStorage.setItem(FILE_STORGAGE_KEY, fileInfo);
+	console.log("DEBUG: file save to storage: " + fileInfo.file);
+	
+	var uploadRange = {
+			"start": 0, 
+			"end": fileSize 
+	};
+	prepareUploadQueue(uploadRange);
+	initUI();
+}
+
+function prepareUploadQueue(uploadRange){
+	var start = uploadRange.start;
+	var end = BYTES_PER_CHUNK;
+	while(start < uploadRange.end) {
+		if (end > uploadRange.end){
+			end = uploadRange.end;
+		}
+		var chunkInfo = {
+			"start": start, 
+			"end": end 
 		};
-		reader.readAsBinaryString(chunk);
+		chunkQueue.enqueue(chunkInfo);
+		start = end;
+		end += BYTES_PER_CHUNK;
 	}
-	
-  function uploadComplete(evt, range) {
-  	  queueSize--; 
-  		processChuckQueue(chunkQueue);
-			console.log("DEBUG: upload completed for chunk range : " + range);
-			var percentComplete = Math.round((initQueueSize - queueSize) * 100 / initQueueSize) + "%"; 
-			console.log("DEBUG: file upload in process with percentage of : " + percentComplete);
-			progressBar.style.width = percentComplete;
-			progressText.innerHTML = percentComplete;
+	initQueueSize = chunkQueue.getLength();
+	queueSize = initQueueSize;
+}
 
-  }  
 
-  function uploadSuccess(evt, range) {
-			console.log("DEBUG: upload suceeded for chunk range : " + range);
-  }  
-	
-  function uploadFailed(evt, range) {
-			console.log("DEBUG: upload failed for chunk range : " + range);
-  }  
-
-  function uploadCanceled(evt, range) {
-			console.log("DEBUG: upload aborted for chunk range : " + range);
-  }  
-
-  function humanlizeFileSize(size) {        
-	  var fileSize = 0;
-    if (size >= 1024 * 1024){
-      fileSize = (Math.round(size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
-    }
-    else{
-      fileSize = (Math.round(size * 100 / 1024) / 100).toString() + 'KB';
-    }
-    return fileSize;
-  }
-
-	function createQueue (){
-	
-	  var queue  = [];
-	  var offset = 0;
-	
-		var that = {};
-		
-	  that.getLength = function(){
-	    return (queue.length - offset);
-	  }
-	
-	  that.isEmpty = function(){
-	    return (queue.length == 0);
-	  }
-	
-	  that.enqueue = function(item){
-	    queue.push(item);
-	  }
-	
-	  that.dequeue = function(){
-	    if (queue.length == 0) return undefined;
-	    var item = queue[offset];
-	    // increment the offset and remove the free space if necessary
-	    if (++ offset * 2 >= queue.length){
-	      queue  = queue.slice(offset);
-	      offset = 0;
-	    }
-	    return item;
-	  }
-	
-	  that.peek = function(){
-	    return (queue.length > 0 ? queue[offset] : undefined);
-	  }
-	
-		return that;
+function submitform() {
+	for (var i=1; i<=MAX_CONCURRENT_CHUNK; i++) {
+		processChuckQueue(chunkQueue);
 	}
-	
+}
+
+function processChuckQueue(chunkQueue) {
+	if(!chunkQueue.isEmpty()){
+		var chunk = chunkQueue.dequeue();
+		var file = fileInfo.file;
+		if (file.mozSlice) {
+			var chunkContent = file.mozSlice(chunk.start, chunk.end);
+		} else if (file.webkitSlice) {
+			var chunkContent = file.webkitSlice(chunk.start, chunk.end);
+		} else if (file.slice) {
+			var chunkContent = file.slice(chunk.start, chunk.end);
+		}
+		var chunkRange = "bytes " + chunk.start + "-" + (chunk.end - 1) + "/" + fileInfo.size;
+		console.log("DEBUG: upload started for chunk range: " + chunkRange);
+		uploadFileChunk(chunkContent, chunkRange, fileInfo.name);
+	}
+}
+
+function uploadFileChunk(chunk, range, fileName) {
+
+	var reader = new FileReader();
+	//bind the events
+	reader.onloadend = function(e) {
+		if (e.target.readyState == FileReader.DONE) {
+			var xhr = new XMLHttpRequest();
+			//xhr.upload.addEventListener("progress", function(evt){uploadComplete(evt, range)}, false);
+			xhr.addEventListener("loadend", function(evt){uploadComplete(evt, range)}, false);
+			xhr.addEventListener("load", function(evt){uploadSuccess(evt, range)}, false);
+			xhr.addEventListener("error", function(evt){uploadFailed(evt, range)}, false);
+			xhr.addEventListener("abort", function(evt){uploadCanceled(evt, range)}, false);
+
+			xhr.open('POST', uploadUrl, true);
+			xhr.setRequestHeader("X-Content-Range", range);
+			xhr.setRequestHeader("Session-ID", fileName);
+			xhr.setRequestHeader("Content-Type", "application/octet-stream");
+			xhr.setRequestHeader("Content-Disposition", 'attachment; name="file"; filename="big.TXT"');
+			xhr.send(chunk);
+		}
+	};
+	reader.readAsBinaryString(chunk);
+}
+
+function uploadComplete(evt, range) {
+	//updateUI();
+	//processChuckQueue(chunkQueue);
+	console.log("DEBUG: upload completed for chunk range : " + range);
+}  
+
+function uploadSuccess(evt, range) {
+	updateUI();
+	processChuckQueue(chunkQueue);
+	console.log("DEBUG: upload suceeded for chunk range : " + range);
+}  
+
+function uploadFailed(evt, range) {
+	console.log("DEBUG: upload failed for chunk range : " + range);
+}  
+
+function uploadCanceled(evt, range) {
+	console.log("DEBUG: upload aborted for chunk range : " + range);
+}  
+
+function initUI() {   
+	progressBar = document.getElementById("progress-bar");
+	progressBar.style.width = "0%";
+	progressText = document.getElementById("progress-text");
+	progressText.innerHTML = "0%";
+	downloadLink = document.getElementById("download-link");
+	downloadLink.style.display = "none";
+	document.getElementById("file-meta").innerHTML = "Total: " + humanlizeFileSize(fileInfo.size);
+	document.getElementById("thread-info").innerHTML = MAX_CONCURRENT_CHUNK + " threads";
+	document.getElementById("chunk-info").innerHTML = queueSize + " chunks(" + humanlizeFileSize(BYTES_PER_CHUNK) + "/chunk)";
+}
+
+function updateUI() {   
+	queueSize--; 
+	var percentComplete = Math.round((initQueueSize - queueSize) * 100 / initQueueSize) + "%"; 
+	progressBar.style.width = percentComplete;
+	progressText.innerHTML = percentComplete;
+	if (queueSize <= 0){
+		downloadLink.style.display = "block";
+	}
+}
+
+function humanlizeFileSize(size) {        
+	var fileSize = 0;
+	if (size >= 1024 * 1024){
+		fileSize = (Math.round(size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+	}
+	else{
+		fileSize = (Math.round(size * 100 / 1024) / 100).toString() + 'KB';
+	}
+	return fileSize;
+}
+
+function createQueue (){
+
+	var queue  = [];
+	var offset = 0;
+
+	var that = {};
+
+	that.getLength = function(){
+		return (queue.length - offset);
+	}
+
+	that.isEmpty = function(){
+		return (queue.length == 0);
+	}
+
+	that.enqueue = function(item){
+		queue.push(item);
+	}
+
+	that.dequeue = function(){
+		if (queue.length == 0) return undefined;
+		var item = queue[offset];
+		// increment the offset and remove the free space if necessary
+		if (++ offset * 2 >= queue.length){
+			queue  = queue.slice(offset);
+			offset = 0;
+		}
+		return item;
+	}
+
+	that.peek = function(){
+		return (queue.length > 0 ? queue[offset] : undefined);
+	}
+
+	return that;
+}
+
 </script>
 
 
