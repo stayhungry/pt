@@ -1,5 +1,5 @@
-var http = require("http");
-var url = require("url");
+var http = require("http"),
+    url = require("url");
 
 // listen to port, handle requests function array
 function start(port, handle, handle_unknown) {
